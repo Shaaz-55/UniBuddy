@@ -1,0 +1,50 @@
+.navbar{
+    background-color: aquamarine;
+    display:flex;
+    justify-content: space-around;
+    height:40px;
+}
+.sidebar{
+    display: flex;
+    flex-direction: column;
+    background-color: lightpink;
+    width:20%;
+    height:100vh;
+
+}
+.shaaz{
+    position:relative;
+    bottom:800px;
+    width:200px;
+    left:400px;
+    height:200px;
+    background-color: limegreen;
+    border:2px solid black;
+    transition: all 1s ease;
+
+}
+.shaaz:hover{
+    width:300px;
+    background-color: yellow;}
+.shashwat{
+    position:relative;
+    bottom:1000px;
+    width:200px;
+    left:800px;
+    height:200px;
+    background-color: limegreen;
+        border:2px solid black;
+}
+.anjali{
+    position:relative;
+    bottom:1200px;
+    width:200px;
+    left:1200px;
+    height:200px;
+    background-color: limegreen;
+        border:2px solid black;
+}
+body{
+    margin:0;
+    background-color: lightgrey;
+}
