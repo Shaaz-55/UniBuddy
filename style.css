@@ -3,6 +3,9 @@
     display:flex;
     justify-content: space-around;
     height:40px;
+    border: 2px solid black;
+    font-weight: bold;
+    padding: 10px;
 }
 .sidebar{
     display: flex;
@@ -10,6 +13,8 @@
     background-color: lightpink;
     width:20%;
     height:100vh;
+    border: 2px solid black;
+    text-align: center;
 
 }
 .shaaz{
@@ -24,7 +29,7 @@
 
 }
 .shaaz:hover{
-    width:300px;
+    width: 250px;
     background-color: yellow;}
 .shashwat{
     position:relative;
@@ -34,8 +39,12 @@
     height:200px;
     background-color: limegreen;
     border:2px solid black;
-    animation: move 2s linear;
+    transition: all 1s ease;
+
 }
+.shashwat:hover{
+    width: 250px;
+    background-color: yellow;}
 .anjali{
     position:relative;
     bottom:1200px;
@@ -44,8 +53,17 @@
     height:200px;
     background-color: limegreen;
     border:2px solid black;
+    transition: all 1s ease;
 }
+.anjali:hover{
+    width: 250px;
+    background-color: yellow;}
 body{
     margin:0;
     background-color: lightgrey;
+}
+.subsidebar{
+    position: relative;
+    bottom: 850px;
+    width:50px;
 }
