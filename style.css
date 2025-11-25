@@ -1,16 +1,18 @@
 .navbar{
-    background-color: aquamarine;
+    background-color: #A9DEF9; 
+    color: #1F1F1F;
     display:flex;
     justify-content: space-around;
     height:40px;
     border: 2px solid black;
     font-weight: bold;
     padding: 10px;
+
 }
 .sidebar{
     display: flex;
     flex-direction: column;
-    background-color: lightpink;
+    background-color:#C7F9CC;
     width:20%;
     height:100vh;
     border: 2px solid black;
@@ -23,47 +25,55 @@
     width:200px;
     left:400px;
     height:200px;
-    background-color: limegreen;
+    background-color:#B8F2E6 ;
     border:2px solid black;
     transition: all 1s ease;
+    border-radius: 10px;
 
 }
 .shaaz:hover{
     width: 250px;
-    background-color: yellow;}
+    background-color: #D0F1FF;}
 .shashwat{
     position:relative;
     bottom:1000px;
     width:200px;
     left:800px;
     height:200px;
-    background-color: limegreen;
+    background-color: #B8F2E6;
     border:2px solid black;
     transition: all 1s ease;
+    border-radius: 10px;
 
 }
 .shashwat:hover{
     width: 250px;
-    background-color: yellow;}
+    background-color: #D0F1FF;}
 .anjali{
     position:relative;
     bottom:1200px;
     width:200px;
     left:1200px;
     height:200px;
-    background-color: limegreen;
+    background-color: #B8F2E6;
     border:2px solid black;
     transition: all 1s ease;
+    border-radius: 10px;
 }
 .anjali:hover{
     width: 250px;
-    background-color: yellow;}
+    background-color: #D0F1FF;}
 body{
     margin:0;
-    background-color: lightgrey;
+    background-color: #F7F7F7;
 }
 .subsidebar{
-    position: relative;
-    bottom: 850px;
+    position:absolute;
+    top:65px;
     width:50px;
+    background-color: #A9DEF9;
+    height:100vh;
+    border: 2px solid black;
+    display: flex;
+    flex-direction: column;
 }
