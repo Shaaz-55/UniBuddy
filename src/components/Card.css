@@ -1,0 +1,21 @@
+.golden-card {
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-card);
+  transition: transform var(--duration-normal) ease, box-shadow var(--duration-normal) ease, border-color var(--duration-normal) ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.golden-card.hoverable:hover {
+  transform: translateY(-2px);
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-raised);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .golden-card.hoverable:hover {
+    transform: none;
+  }
+}

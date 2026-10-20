@@ -1,0 +1,57 @@
+.badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.badge-icon {
+  flex-shrink: 0;
+}
+
+/* College verified variant: matcha/success-soft background, success-text text, success color for icon */
+.badge-verified {
+  background: var(--success-soft);
+  color: var(--success-text);
+}
+
+.badge-verified .badge-icon {
+  color: var(--success);
+}
+
+/* Glass variant (e.g. on Campus Pass) */
+.badge-glass {
+  background: rgba(255, 255, 255, 0.22);
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.badge-glass .badge-icon {
+  color: #FFFFFF;
+}
+
+/* Coming Soon variant */
+.badge-coming-soon {
+  background: var(--primary-soft);
+  color: var(--primary-text);
+  border: 1px solid var(--primary-text);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 10px;
+}
+
+.badge-default {
+  background: var(--surface-2);
+  color: var(--text-2);
+  border: 1px solid var(--line);
+}

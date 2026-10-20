@@ -1,0 +1,39 @@
+.skill-tag {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  user-select: none;
+  transition: transform var(--duration-fast) ease;
+}
+
+.skill-tag-indigo {
+  background-color: var(--tint-indigo-bg);
+  color: var(--tint-indigo-fg);
+}
+
+.skill-tag-pink {
+  background-color: var(--tint-pink-bg);
+  color: var(--tint-pink-fg);
+}
+
+.skill-tag-mango {
+  background-color: var(--tint-mango-bg);
+  color: var(--tint-mango-fg);
+}
+
+.skill-tag-mint {
+  background-color: var(--tint-mint-bg);
+  color: var(--tint-mint-fg);
+}
+
+.skill-tag-sky {
+  background-color: var(--tint-sky-bg);
+  color: var(--tint-sky-fg);
+}

@@ -1,0 +1,158 @@
+:root {
+  /* Color Scheme */
+  color-scheme: light;
+
+  /* Surfaces & Base */
+  --bg: #FBFAF7;
+  --surface: #FFFFFF;
+  --surface-2: #F3F1EC;
+  --line: rgba(22, 18, 15, 0.08);
+  --line-strong: rgba(22, 18, 15, 0.16);
+
+  /* Typography Colors */
+  --text: #16120F;
+  --text-2: #5E5850;
+  --text-3: #6F685E;
+
+  /* Primary Brand */
+  --primary: #5B4CFF;
+  --primary-hover: #4636E0;
+  --primary-soft: #ECEAFF;
+  --primary-text: #4A3CE6;
+  --on-primary: #FFFFFF;
+
+  /* Accents & Status */
+  --accent: #FF6A3D;
+  --on-accent: #16120F;
+  --like: #FF3D77;
+  --success: #12B76A;
+  --success-soft: #DDF7EA;
+  --success-text: #0B6B45;
+  --danger: #E5484D;
+  --danger-text: #C4313A;
+  --star-gold: #FFB400;
+  --star-empty: rgba(22, 18, 15, 0.14);
+
+  /* Skill Tint Pairs (bg / fg) */
+  --tint-indigo-bg: #ECEAFF;
+  --tint-indigo-fg: #4A3CE6;
+  --tint-pink-bg: #FFE8EF;
+  --tint-pink-fg: #B3123F;
+  --tint-mango-bg: #FFF1CC;
+  --tint-mango-fg: #7A4B00;
+  --tint-mint-bg: #DDF7EA;
+  --tint-mint-fg: #0B6B45;
+  --tint-sky-bg: #E1F0FF;
+  --tint-sky-fg: #0B5CAD;
+
+  /* Gradients */
+  --gradient-brand: linear-gradient(135deg, #5B4CFF 0%, #FF3D77 60%, #FFB400 100%);
+  --gradient-text: linear-gradient(90deg, #5B4CFF, #FF3D77);
+
+  /* Avatar Gradients */
+  --avatar-indigo: linear-gradient(135deg, #5B4CFF, #8B80FF);
+  --avatar-gulabi: linear-gradient(135deg, #FF3D77, #FF8A5C);
+  --avatar-mango: linear-gradient(135deg, #FFB400, #FF6A3D);
+  --avatar-matcha: linear-gradient(135deg, #12B76A, #00B8D9);
+  --avatar-sky: linear-gradient(135deg, #2E90FA, #5B4CFF);
+  --avatar-plum: linear-gradient(135deg, #9B51E0, #FF3D77);
+
+  /* Shadows & Glass */
+  --shadow-card: 0 1px 2px rgba(22, 18, 15, 0.06), 0 8px 24px rgba(22, 18, 15, 0.06);
+  --shadow-raised: 0 12px 40px rgba(22, 18, 15, 0.12);
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-blur: blur(20px) saturate(180%);
+
+  /* Radii */
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+
+  /* Layering (z-index) */
+  --z-nav: 1100;
+  --z-sheet: 1200;
+  --z-modal: 1300;
+  --z-toast: 1400;
+
+  /* Motion */
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Typography */
+  --font-display: "Bricolage Grotesque", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", "Noto Sans Devanagari", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Dark Theme via media query or .theme-dark class */
+@media (prefers-color-scheme: dark) {
+  :root:not(.theme-light) {
+    color-scheme: dark;
+    --bg: #0E0D12;
+    --surface: #17161D;
+    --surface-2: #211F29;
+    --line: rgba(255, 255, 255, 0.08);
+    --line-strong: rgba(255, 255, 255, 0.16);
+    --text: #F6F4F0;
+    --text-2: #B4AEA4;
+    --text-3: #8F897F;
+    --primary: #6A5CFF;
+    --primary-hover: #7A6EFF;
+    --primary-soft: rgba(106, 92, 255, 0.18);
+    --primary-text: #A59CFF;
+    --on-primary: #FFFFFF;
+    --star-empty: rgba(255, 255, 255, 0.18);
+
+    /* Dark Skill Tint Pairs */
+    --tint-indigo-bg: rgba(106, 92, 255, 0.18);
+    --tint-indigo-fg: #A59CFF;
+    --tint-pink-bg: rgba(255, 61, 119, 0.18);
+    --tint-pink-fg: #FF80A6;
+    --tint-mango-bg: rgba(255, 180, 0, 0.18);
+    --tint-mango-fg: #FFD166;
+    --tint-mint-bg: rgba(18, 183, 106, 0.18);
+    --tint-mint-fg: #6EE7B7;
+    --tint-sky-bg: rgba(46, 144, 250, 0.18);
+    --tint-sky-fg: #93C5FD;
+
+    --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 12px 40px rgba(0, 0, 0, 0.5);
+    --shadow-raised: 0 16px 48px rgba(0, 0, 0, 0.6);
+    --glass-bg: rgba(20, 19, 26, 0.72);
+  }
+}
+
+.theme-dark {
+  color-scheme: dark;
+  --bg: #0E0D12;
+  --surface: #17161D;
+  --surface-2: #211F29;
+  --line: rgba(255, 255, 255, 0.08);
+  --line-strong: rgba(255, 255, 255, 0.16);
+  --text: #F6F4F0;
+  --text-2: #B4AEA4;
+  --text-3: #8F897F;
+  --primary: #6A5CFF;
+  --primary-hover: #7A6EFF;
+  --primary-soft: rgba(106, 92, 255, 0.18);
+  --primary-text: #A59CFF;
+  --on-primary: #FFFFFF;
+  --star-empty: rgba(255, 255, 255, 0.18);
+
+  --tint-indigo-bg: rgba(106, 92, 255, 0.18);
+  --tint-indigo-fg: #A59CFF;
+  --tint-pink-bg: rgba(255, 61, 119, 0.18);
+  --tint-pink-fg: #FF80A6;
+  --tint-mango-bg: rgba(255, 180, 0, 0.18);
+  --tint-mango-fg: #FFD166;
+  --tint-mint-bg: rgba(18, 183, 106, 0.18);
+  --tint-mint-fg: #6EE7B7;
+  --tint-sky-bg: rgba(46, 144, 250, 0.18);
+  --tint-sky-fg: #93C5FD;
+
+  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 12px 40px rgba(0, 0, 0, 0.5);
+  --shadow-raised: 0 16px 48px rgba(0, 0, 0, 0.6);
+  --glass-bg: rgba(20, 19, 26, 0.72);
+}

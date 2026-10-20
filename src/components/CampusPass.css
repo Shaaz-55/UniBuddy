@@ -1,0 +1,196 @@
+.campus-pass-wrapper {
+  perspective: 1000px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px 12px 36px;
+}
+
+.campus-pass-card {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  aspect-ratio: 1.586 / 1;
+  background: var(--gradient-brand);
+  border-radius: var(--radius-xl);
+  padding: 28px 28px 24px;
+  color: #FFFFFF;
+  box-shadow: 0 20px 50px -10px rgba(91, 76, 255, 0.4), 0 10px 25px -5px rgba(255, 61, 119, 0.3);
+  transform: rotate(-3deg);
+  transition: box-shadow var(--duration-normal) ease;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  user-select: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .campus-pass-card {
+    transform: none !important;
+  }
+}
+
+.campus-pass-card:hover {
+  box-shadow: 0 26px 60px -8px rgba(91, 76, 255, 0.5), 0 14px 30px -4px rgba(255, 180, 0, 0.35);
+}
+
+/* Glass highlight reflection */
+.campus-pass-glass-sheen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 100%);
+  border-top-left-radius: var(--radius-xl);
+  border-top-right-radius: var(--radius-xl);
+  pointer-events: none;
+}
+
+/* Mango glow at bottom right */
+.campus-pass-mango-glow {
+  position: absolute;
+  bottom: -20px;
+  right: -20px;
+  width: 160px;
+  height: 160px;
+  background: radial-gradient(circle, rgba(255, 180, 0, 0.45) 0%, rgba(255, 180, 0, 0) 70%);
+  border-radius: 50%;
+  filter: blur(20px);
+  pointer-events: none;
+}
+
+.campus-pass-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 1;
+}
+
+.campus-pass-brand-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.brand-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+}
+
+.campus-pass-holder-section {
+  position: relative;
+  z-index: 1;
+  margin-top: 6px;
+}
+
+.campus-pass-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.campus-pass-holder-name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 26px;
+  letter-spacing: -0.02em;
+  color: #FFFFFF;
+  margin: 2px 0 0;
+  line-height: 1.1;
+}
+
+.campus-pass-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.25);
+  margin: 6px 0;
+  position: relative;
+  z-index: 1;
+}
+
+.campus-pass-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.grid-cell {
+  display: flex;
+  flex-direction: column;
+}
+
+.cell-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.cell-value {
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #FFFFFF;
+  line-height: 1.25;
+}
+
+/* Floating Sticker Pill */
+.campus-pass-floating-pill {
+  position: absolute;
+  bottom: -16px;
+  left: 28px;
+  background: #FFFFFF;
+  color: #16120F;
+  border-radius: var(--radius-pill);
+  padding: 6px 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 8px 24px rgba(22, 18, 15, 0.16);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  z-index: 2;
+  border: 1px solid rgba(22, 18, 15, 0.06);
+}
+
+.star-icon {
+  font-size: 13px;
+}
+
+@media (max-width: 480px) {
+  .campus-pass-card {
+    padding: 20px 20px 18px;
+    border-radius: var(--radius-lg);
+  }
+
+  .campus-pass-holder-name {
+    font-size: 22px;
+  }
+
+  .cell-value {
+    font-size: 12px;
+  }
+
+  .campus-pass-floating-pill {
+    bottom: -14px;
+    left: 18px;
+    padding: 5px 12px;
+    font-size: 12px;
+  }
+}

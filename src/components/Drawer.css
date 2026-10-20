@@ -1,0 +1,76 @@
+.drawer-portal {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-sheet);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(14, 13, 18, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.drawer-panel {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  max-width: 90vw;
+  background-color: var(--surface);
+  border-left: 1px solid var(--line);
+  box-shadow: var(--shadow-raised);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 28px;
+  border-bottom: 1px solid var(--line);
+}
+
+.drawer-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text);
+}
+
+.drawer-subtitle {
+  font-size: 13px;
+  color: var(--text-2);
+  margin: 2px 0 0;
+}
+
+.drawer-close-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--text-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: background-color var(--duration-fast) ease, color var(--duration-fast) ease;
+}
+
+.drawer-close-btn:hover {
+  background: var(--line-strong);
+  color: var(--text);
+}
+
+.drawer-body {
+  padding: 28px;
+  overflow-y: auto;
+  flex: 1;
+}

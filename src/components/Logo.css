@@ -1,0 +1,44 @@
+.unibuddy-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--text);
+  user-select: none;
+}
+
+.logo-mark {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--gradient-brand);
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(91, 76, 255, 0.25);
+}
+
+.unibuddy-logo.small .logo-mark {
+  width: 16px;
+  height: 16px;
+}
+
+.unibuddy-logo.large .logo-mark {
+  width: 26px;
+  height: 26px;
+}
+
+.logo-wordmark {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--text);
+}
+
+.unibuddy-logo.small .logo-wordmark {
+  font-size: 18px;
+}
+
+.unibuddy-logo.large .logo-wordmark {
+  font-size: 26px;
+}
