@@ -16,6 +16,26 @@ export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
+  // Track whether the page has been scrolled
+const [isScrolled, setIsScrolled] = useState(false);
+
+useEffect(() => {
+  const handleScroll = () => {
+    setIsScrolled(window.scrollY > 8);
+  };
+
+  // Set the initial state
+  handleScroll();
+
+  window.addEventListener("scroll", handleScroll, {
+    passive: true,
+  });
+
+  return () => {
+    window.removeEventListener("scroll", handleScroll);
+  };
+}, []);
+
   // Theme state: load the user's saved preference
 const [theme, setTheme] = useState(() => {
   const savedTheme = localStorage.getItem('unibuddy-theme');
@@ -93,7 +113,12 @@ const toggleTheme = () => {
 
   return (
     <header className="navbar-anchor">
-      <nav className="navbar-pill wrap" aria-label="Main navigation">
+      <nav
+  className={`navbar-pill wrap ${
+    isScrolled ? "navbar-scrolled" : ""
+  }`}
+  aria-label="Main navigation"
+>
         {/* Brand Logo */}
         <Link to={isAuthenticated ? '/mentors' : '/'} className="navbar-brand">
           <Logo />

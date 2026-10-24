@@ -722,3 +722,27 @@
 .stories-hint-deck {
   color: var(--text-2);
 }
+
+/* Light mode: make story navigation arrows visible */
+.theme-light .nav-arrow-btn {
+  background: rgba(91, 76, 255, 0.09);
+  border: 1px solid rgba(91, 76, 255, 0.28);
+  color: #5546D8;
+
+  box-shadow: 0 3px 10px rgba(35, 25, 80, 0.08);
+}
+
+/* Hover: purple brand accent */
+.theme-light .nav-arrow-btn:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #FFFFFF;
+
+  transform: scale(1.05);
+}
+
+/* Keyboard accessibility */
+.theme-light .nav-arrow-btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}

@@ -387,3 +387,44 @@
     display: none;
   }
 }
+
+/* Give the page content a little breathing room below the navbar */
+.navbar-anchor {
+  margin-bottom: 24px;
+}
+
+/* Apple-style glass effect when scrolling */
+.navbar-pill.navbar-scrolled {
+  background: rgba(20, 19, 26, 0.62);
+  border-color: rgba(255, 255, 255, 0.14);
+
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.20),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  transition:
+    background 220ms ease,
+    backdrop-filter 220ms ease,
+    border-color 220ms ease,
+    box-shadow 220ms ease;
+}
+
+/* Glass effect in light mode */
+.theme-light .navbar-pill.navbar-scrolled {
+  background: rgba(255, 255, 255, 0.68);
+  border-color: rgba(35, 32, 50, 0.12);
+
+  box-shadow:
+    0 8px 32px rgba(20, 20, 35, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* Slightly less spacing on smaller screens */
+@media (max-width: 820px) {
+  .navbar-anchor {
+    margin-bottom: 18px;
+  }
+}
