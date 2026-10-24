@@ -43,6 +43,10 @@
 .theme-dark .leaflet-tile-pane {
   filter: invert(1) hue-rotate(180deg) saturate(0.6) brightness(0.92) contrast(0.92);
 }
+/* Explicit light mode takes priority over OS dark mode */
+.theme-light .leaflet-tile-pane {
+  filter: saturate(0.75) sepia(0.12) brightness(1.03) contrast(0.95);
+}
 
 /* Leaflet Zoom Controls Customization */
 .leaflet-control-zoom {

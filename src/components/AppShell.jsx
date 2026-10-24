@@ -20,16 +20,16 @@ export default function AppShell({ children }) {
   }, [location.pathname]);
 
   // Set theme-dark class on wrapper or html root when on /stories
-  useEffect(() => {
-    if (isStories) {
-      document.documentElement.classList.add('theme-dark');
-    } else {
-      document.documentElement.classList.remove('theme-dark');
-    }
-  }, [isStories]);
+  // useEffect(() => {
+  //   if (isStories) {
+  //     document.documentElement.classList.add('theme-dark');
+  //   } else {
+  //     document.documentElement.classList.remove('theme-dark');
+  //   }
+  // }, [isStories]);
 
   return (
-    <div className={`app-shell ${isStories ? 'theme-dark is-stories-page' : ''}`}>
+    <div className={`app-shell ${isStories ? "is-stories-page" : ""}`}>
       <Navbar />
       <main
         className={`app-main-content ${

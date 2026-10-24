@@ -35,6 +35,10 @@
 .theme-dark .glow-blob {
   opacity: 0.3;
 }
+/* Keep Home page glows subtle in light mode */
+.theme-light .glow-blob {
+  opacity: 0.18;
+}
 
 .glow-indigo {
   top: -100px;

@@ -696,3 +696,29 @@
     height: 18px;
   }
 }
+
+/* Theme-aware Stories page background */
+.stories-page {
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+/* Theme-aware empty state */
+.stories-empty-state {
+  background-color: var(--surface);
+  border-color: var(--line);
+  box-shadow: var(--shadow-raised);
+}
+
+.stories-empty-title {
+  color: var(--text);
+}
+
+.stories-empty-text {
+  color: var(--text-2);
+}
+
+/* Hint text below the story cards */
+.stories-hint-deck {
+  color: var(--text-2);
+}

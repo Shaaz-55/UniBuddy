@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
-import { LogOut } from 'lucide-react';
+import { LogOut, Sun, Moon } from "lucide-react";
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import Logo from './Logo';
 import './Navbar.css';
+
 
 export default function Navbar() {
   const { user, isAuthenticated, logout, openLoginModal, openRegisterModal } = useAuth();
@@ -14,6 +15,29 @@ export default function Navbar() {
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+
+  // Theme state: load the user's saved preference
+const [theme, setTheme] = useState(() => {
+  const savedTheme = localStorage.getItem('unibuddy-theme');
+  return savedTheme === 'light' ? 'light' : 'dark';
+});
+
+// Apply the selected theme and save the preference
+useEffect(() => {
+  const root = document.documentElement;
+
+  root.classList.toggle('theme-light', theme === 'light');
+  root.classList.toggle('theme-dark', theme === 'dark');
+
+  localStorage.setItem('unibuddy-theme', theme);
+}, [theme]);
+
+// Switch between light and dark modes
+const toggleTheme = () => {
+  setTheme((currentTheme) =>
+    currentTheme === 'dark' ? 'light' : 'dark'
+  );
+};
 
   // Close dropdown on outside click or Escape
   useEffect(() => {
@@ -138,6 +162,28 @@ export default function Navbar() {
 
         {/* Right Action Cluster */}
         <div className="navbar-actions">
+
+        <button
+          type="button"
+          className="theme-toggle-btn"
+          onClick={toggleTheme}
+          aria-label={
+            theme === 'dark'
+              ? 'Switch to light mode'
+              : 'Switch to dark mode'
+          }
+          title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+        >
+          {theme === 'dark' ? (
+            <Sun size={18} />
+          ) : (
+            <Moon size={18} />
+          )}
+          <span className="theme-toggle-label">
+            {theme === 'dark' ? 'Light mode' : 'Dark mode'}
+          </span>
+        </button>
+
           {!isAuthenticated ? (
             <div className="navbar-auth-btns">
               <button

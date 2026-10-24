@@ -21,6 +21,10 @@
 }
 
 /* Stories page specific ambient background */
-.app-shell.is-stories-page {
+/* .app-shell.is-stories-page {
   background-color: #0B0A10;
+} */
+
+.app-shell.is-stories-page {
+  background-color: var(--bg);
 }
