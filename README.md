@@ -26,6 +26,10 @@ Run the production build:
 ```bash
 npm run build
 ```
+Run the connection and messaging rules tests:
+```bash
+npm test
+```
 Run the ESLint suite:
 ```bash
 npm run lint
@@ -33,9 +37,9 @@ npm run lint
 
 ---
 
-## 🔑 Authentication & Demo Account
+## 🔑 Authentication & Demo Accounts
 
-This application is **frontend-only**. All authentication and user profiles are mocked client-side with safe local session persistence under the `unibuddy_user` key. Passwords are required during login/registration for UX simulation, but are **never stored or transmitted**.
+This application is **frontend-only**. Authentication is mocked client-side, with the active profile under `unibuddy_user` and registered profiles under `unibuddy_accounts_v1`. Registered accounts remain available after logout. Passwords are required during login/registration for UX simulation, but are **never stored or transmitted** and are not checked against a real account credential.
 
 ### Instant Demo Account
 You can click **"Try the demo account"** directly in any auth dialog, or log in with:
@@ -43,11 +47,21 @@ You can click **"Try the demo account"** directly in any auth dialog, or log in 
 - **Password:** `password` (any 6+ characters)
 - **Profile:** Rahul Verma, IIT Bombay, 1st yr, DSA & Web Dev
 
+### Senior Demo
+Click **"Try the senior demo"** in the login dialog, or register from **"Register as a Senior"** on the homepage. The senior demo is Aarav Mehta (`aarav@iitb.ac.in`, any 6+ character password), with an existing Rahul conversation and three incoming junior requests. New senior registrations start with their own empty network.
+
+To try both sides, log in as the senior in one tab, open another tab, log out there and choose the junior demo. Each already-open tab keeps its current role, while network changes and messages sync between them. Reloading a tab uses the most recently saved active profile.
+
+### Connections and Messaging
+Students send a connection request, and the recipient accepts it. Only accepted junior–senior connections can exchange messages. Either student can cancel a pending request or remove an accepted connection; removal also deletes its local conversation. Pausing a senior's availability blocks new incoming requests while existing chats remain usable.
+
+Conversations are stored under `unibuddy_network_v1`, with unread counts, sent/seen receipts, emoji, multiline messages and drafts retained while navigating between inbox conversations. The browser `storage` event syncs changes across tabs on the same origin. This is a local prototype: cross-device messaging and secure access control need backend authentication, a database, and server-side connection checks. No messages are sent to a remote user or service.
+
 ---
 
 ## 🗺️ Routes & Pages
 
-The application is structured around four primary routes:
+The application includes these routes:
 
 1. **`/` — Homepage (Public)**
    - Hero with interactive 3D spring-tilted **UniBuddy Campus Pass** and Golden Hour ambient light blobs.
@@ -63,6 +77,7 @@ The application is structured around four primary routes:
    - Sorting by top-rated, most-reviewed, and price (low-to-high / high-to-low).
    - Shimmer loading skeletons on initial load.
    - Responsive mentor profile drawer (desktop slide-over / mobile bottom sheet) with 3x2 proof-of-skill tiles, recent verified reviews, and booking simulation.
+   - Connect and message controls, with registered senior profiles appearing in the directory.
 
 3. **`/map` — Campus Map (Protected)**
    - Open-source mapping powered by Leaflet and OpenStreetMap.
@@ -76,6 +91,18 @@ The application is structured around four primary routes:
    - Framer Motion swipe stack supporting horizontal drag physics, keyboard navigation (Left/Right arrows, 'L' to like), and touch gesture support.
    - Autoplay handling for videos (only the top card plays, muted by default with an audio toggle).
    - Instagram Reels-style action rail (like with burst animations, double-tap to like, comments bottom sheet, share sheet, and report/mute menu).
+
+5. **`/senior` — Senior Dashboard (Senior only)**
+   - Matching light/dark theme, a mentorship welcome panel, availability switch, live network counts, connection requests and recent conversations.
+
+6. **`/senior/profile` — Mentor Profile (Senior only)**
+   - Editable name, college, year, branch, introduction, mentorship skills and availability, with a live junior-facing preview.
+
+7. **`/connections` — Campus Circle (Protected, both roles)**
+   - Connected students, incoming requests, sent requests and discovery, with search, profiles, acceptance, cancellation and removal.
+
+8. **`/messages` and `/messages/:peerId` — Inbox (Protected, both roles)**
+   - Instagram-style conversation list and chat pane, request inbox, connection gating, read receipts, emoji, multiline composer and mobile inbox/thread navigation.
 
 ---
 

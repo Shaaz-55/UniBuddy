@@ -1,0 +1,200 @@
+.connection-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.connection-tabs {
+  display: flex;
+  gap: 5px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  padding: 5px;
+  border-radius: var(--radius-pill);
+}
+.connection-tabs button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 15px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-3);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.connection-tabs button.active {
+  color: var(--primary-text);
+  background: var(--surface);
+  box-shadow: 0 2px 5px rgba(0,0,0,.04);
+}
+.connection-controls .network-search {
+  width: 275px;
+}
+.connections-explainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-3);
+  margin: 0 0 28px;
+}
+.connections-explainer > svg {
+  color: var(--primary-text);
+  flex-shrink: 0;
+}
+.connections-explainer p {
+  font-size: 12px;
+  margin: 0;
+  line-height: 1.7;
+}
+.student-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+.student-card {
+  display: flex;
+  flex-direction: column;
+  transition: border-color 180ms ease;
+}
+.student-card:hover {
+  border-color: var(--line-strong);
+}
+.student-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+.student-role {
+  border-radius: var(--radius-pill);
+  padding: 6px 10px;
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--primary-text);
+  background: var(--primary-soft);
+}
+.student-role.role-junior {
+  background: var(--tint-mango-bg);
+  color: var(--tint-mango-fg);
+}
+.student-name-button {
+  text-align: left;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.student-name-button h2 {
+  font-size: 23px;
+  margin: 0 0 7px;
+}
+.student-name-button:hover h2 {
+  color: var(--primary-text);
+}
+.student-college {
+  color: var(--text-3);
+  font-size: 11px;
+  line-height: 1.8;
+  margin: 0 0 16px;
+}
+.student-card .skill-tag {
+  font-size: 10px;
+}
+.student-bio {
+  color: var(--text-2);
+  font-size: 12px;
+  line-height: 1.8;
+  margin: 18px 0 24px;
+  flex: 1;
+}
+.student-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 17px;
+  border-top: 1px solid var(--line);
+}
+.student-profile-link {
+  background: transparent;
+  border: 0;
+  padding: 6px 0;
+}
+.connection-profile {
+  padding: 12px 0;
+}
+.connection-profile > .student-avatar {
+  margin-bottom: 20px;
+}
+.connection-profile .network-eyebrow {
+  display: flex;
+}
+.connection-profile h2 {
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+.connection-profile h3 {
+  font-size: 17px;
+  margin-top: 30px;
+}
+.connection-profile p {
+  color: var(--text-2);
+  line-height: 1.8;
+  font-size: 13px;
+  margin-bottom: 24px;
+}
+.remove-connection-copy {
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--text-2);
+}
+.remove-connection-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 22px;
+}
+.network-danger-btn {
+  background: var(--danger);
+  color: #fff;
+  border: 0;
+  border-radius: var(--radius-pill);
+  min-height: 38px;
+  padding: 0 16px;
+  font-size: 12px;
+  font-weight: 600;
+}
+@media (max-width: 950px) {
+  .student-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .connection-controls .network-search {
+    width: 100%;
+  }
+}
+@media (max-width: 600px) {
+  .student-grid {
+    grid-template-columns: 1fr;
+  }
+  .connection-tabs {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 16px;
+  }
+  .connection-tabs button {
+    padding: 10px 12px;
+    font-size: 11px;
+  }
+  .connections-explainer {
+    align-items: flex-start;
+  }
+  .connections-explainer > svg {
+    margin-top: 2px;
+  }
+}
+

@@ -721,3 +721,5 @@
     width: 100%;
   }
 }
+.mentor-card-connect { margin-top: 16px; margin-bottom: 10px; }
+.mentor-card-connect .network-btn, .mentor-card-connect .network-secondary-btn { width: 100%; }

@@ -5,12 +5,12 @@ import {
   Star,
   UserCheck,
   Calendar,
-  MessageSquare,
   Users,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
-import { MENTORS } from '../../data/mentors';
+import { useNetwork } from '../../context/NetworkContext';
+import ConnectionAction from '../../components/ConnectionAction';
 import Card from '../../components/Card';
 import Badge from '../../components/Badge';
 import SkillTag from '../../components/SkillTag';
@@ -79,6 +79,16 @@ const ALL_COLLEGES = [
 export default function Mentors() {
   const { user } = useAuth();
   const { showToast } = useToast();
+  const { profiles } = useNetwork();
+  const mentors = useMemo(() => profiles.filter((profile) => profile.role === 'senior').map((profile) => ({
+    rating: 0, reviewCount: 0, price: 249, sessionsCompleted: 0, reviews: [], branch: '',
+    quote: profile.bio || 'Happy to help you find your next step.',
+    ...profile,
+    initials: profile.name.split(/\s+/).map((part) => part[0]).slice(0, 2).join('').toUpperCase(),
+    gradient: profile.gradient || 'var(--avatar-indigo)',
+    skills: profile.interests || profile.skills || [],
+    description: profile.bio || profile.description || 'Here to help juniors learn and grow.',
+  })), [profiles]);
 
   // Search & Filter state
   const [searchQuery, setSearchQuery] = useState('');
@@ -114,7 +124,7 @@ export default function Mentors() {
 
   // Filter & Sort logic
   const filteredMentors = useMemo(() => {
-    return MENTORS.filter((m) => {
+    return mentors.filter((m) => {
       // Search query (name, skill, college)
       if (debouncedQuery.trim()) {
         const q = debouncedQuery.toLowerCase();
@@ -162,6 +172,7 @@ export default function Mentors() {
     selectedYear,
     minRating4,
     sortBy,
+    mentors,
   ]);
 
   const handleClearFilters = () => {
@@ -182,11 +193,6 @@ export default function Mentors() {
   const handleBookClick = (e) => {
     e.stopPropagation();
     showToast('Booking jaldi khulegi 🚀');
-  };
-
-  const handleMessageClick = (e) => {
-    e.stopPropagation();
-    showToast('Messaging jaldi khulegi 💬');
   };
 
   const firstName = user?.name ? user.name.split(' ')[0] : 'Junior';
@@ -464,6 +470,7 @@ export default function Mentors() {
                 onClick={() => handleCardClick(mentor)}
                 tabIndex={0}
                 onKeyDown={(e) => {
+                  if (e.target !== e.currentTarget) return;
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
                     handleCardClick(mentor);
@@ -484,7 +491,7 @@ export default function Mentors() {
                     </div>
                     <div className="mentor-meta-cluster">
                       <Badge variant="verified" icon={UserCheck}>
-                        College verified
+                        {mentor.verified ? 'College verified' : 'Senior pass'}
                       </Badge>
                       <span className="mentor-college-year">
                         {mentor.college} · {mentor.year}
@@ -516,6 +523,7 @@ export default function Mentors() {
                 </div>
 
                 {/* Footer Hairline + Price & Book CTA */}
+                <div className="mentor-card-connect" onClick={(event) => event.stopPropagation()}><ConnectionAction profile={mentor} /></div>
                 <div className="mentor-card-foot">
                   <div className="mentor-price-cluster">
                     <span className="price-val">₹{mentor.price}</span>
@@ -561,7 +569,7 @@ export default function Mentors() {
                 </p>
                 <div className="drawer-verified-sessions">
                   <Badge variant="verified" icon={UserCheck}>
-                    College verified
+                    {selectedMentor.verified ? 'College verified' : 'Senior pass'}
                   </Badge>
                   <span className="sessions-count">
                     · {selectedMentor.sessionsCompleted} sessions completed
@@ -650,14 +658,7 @@ export default function Mentors() {
                 <Calendar size={18} />
                 <span>Book — ₹{selectedMentor.price}</span>
               </button>
-              <button
-                type="button"
-                className="drawer-message-cta"
-                onClick={handleMessageClick}
-              >
-                <MessageSquare size={18} />
-                <span>Message first, free</span>
-              </button>
+              <ConnectionAction profile={selectedMentor} />
             </div>
           </div>
         )}

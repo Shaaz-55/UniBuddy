@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
-import { LogOut, Sun, Moon } from "lucide-react";
+import { LogOut, Sun, Moon, Users, UserRound } from "lucide-react";
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import { useNetwork } from '../context/NetworkContext';
 import Logo from './Logo';
 import './Navbar.css';
 
@@ -12,6 +13,12 @@ export default function Navbar() {
   const { showToast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
+  const { unreadCount, incomingRequests } = useNetwork();
+  const isSenior = user?.role === 'senior';
+  const homeRoute = isSenior ? '/senior' : '/mentors';
+  const tabs = isSenior
+    ? [{ to: '/senior', label: 'Dashboard', end: true }, { to: '/connections', label: 'My juniors', count: incomingRequests.length }, { to: '/messages', label: 'Messages', count: unreadCount }, { to: '/stories', label: 'Stories' }]
+    : [{ to: '/mentors', label: 'Mentors' }, { to: '/map', label: 'Map' }, { to: '/stories', label: 'Stories' }, { to: '/messages', label: 'Messages', count: unreadCount }];
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -120,7 +127,7 @@ const toggleTheme = () => {
   aria-label="Main navigation"
 >
         {/* Brand Logo */}
-        <Link to={isAuthenticated ? '/mentors' : '/'} className="navbar-brand">
+        <Link to={isAuthenticated ? homeRoute : '/'} className="navbar-brand">
           <Logo />
         </Link>
 
@@ -157,31 +164,10 @@ const toggleTheme = () => {
             </button>
           </div>
         ) : (
-          <div className="navbar-tabs hide-mobile" role="tablist">
-            <NavLink
-              to="/mentors"
-              className={({ isActive }) =>
-                `navbar-tab-item ${isActive ? 'active' : ''}`
-              }
-            >
-              Mentors
-            </NavLink>
-            <NavLink
-              to="/map"
-              className={({ isActive }) =>
-                `navbar-tab-item ${isActive ? 'active' : ''}`
-              }
-            >
-              Map
-            </NavLink>
-            <NavLink
-              to="/stories"
-              className={({ isActive }) =>
-                `navbar-tab-item ${isActive ? 'active' : ''}`
-              }
-            >
-              Stories
-            </NavLink>
+          <div className="navbar-tabs hide-mobile">
+            {tabs.map((tab) => <NavLink key={tab.to} to={tab.to} end={tab.end} className={({ isActive }) => `navbar-tab-item ${isActive ? 'active' : ''}`}>
+              {tab.label}{tab.count > 0 && <span className="nav-unread-badge">{tab.count}</span>}
+            </NavLink>)}
           </div>
         )}
 
@@ -250,9 +236,11 @@ const toggleTheme = () => {
                   <div className="user-dropdown-profile">
                     <p className="dropdown-user-name">{user?.name}</p>
                     <p className="dropdown-user-college">{user?.college}</p>
-                    <p className="dropdown-user-year">{user?.year} · Junior</p>
+                    <p className="dropdown-user-year">{user?.year} · {isSenior ? 'Senior' : 'Junior'}</p>
                   </div>
                   <div className="dropdown-divider" />
+                  {isSenior && <Link to="/senior/profile" className="dropdown-item" role="menuitem" onClick={() => setIsDropdownOpen(false)}><UserRound size={16} />Edit mentor profile</Link>}
+                  <Link to="/connections" className="dropdown-item" role="menuitem" onClick={() => setIsDropdownOpen(false)}><Users size={16} />Your connections</Link>
                   <button
                     type="button"
                     className="dropdown-item logout-btn"

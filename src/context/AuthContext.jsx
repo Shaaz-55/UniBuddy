@@ -1,151 +1,127 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { DEMO_JUNIOR, DEMO_SENIOR } from '../data/network';
+import { readStorage, writeStorage } from '../lib/storage';
 
-/**
- * MOCK AUTHENTICATION CONTEXT
- * NOTE: This is a client-side mock placeholder using localStorage.
- * It will be replaced by a secure backend authentication service in production.
- * Passwords are never saved or stored.
- */
-
+// Prototype authentication only. Passwords are never persisted or transmitted.
 const STORAGE_KEY = 'unibuddy_user';
-
-const DEMO_USER = {
-  name: 'Rahul Verma',
-  email: 'rahul@iitb.ac.in',
-  college: 'IIT Bombay',
-  year: '1st yr',
-  interests: ['DSA', 'Web Dev'],
-  role: 'junior',
-};
-
+const ACCOUNTS_KEY = 'unibuddy_accounts_v1';
 const AuthContext = createContext(null);
-
-export function AuthProvider({ children }) {
-  const [user, setUser] = useState(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      return stored ? JSON.parse(stored) : null;
-    } catch {
-      return null;
-    }
-  });
-
+function normalizeProfile(profile) {
+  if (typeof profile?.email !== 'string' || typeof profile?.name !== 'string' || !profile.email || !profile.name) return null;
+  const email = profile.email.trim().toLowerCase();
+  const demo = [DEMO_JUNIOR, DEMO_SENIOR].find(item => item.email === email);
+  return {
+    ...profile,
+    email,
+    id: profile.id || demo?.id || `student:${email}`,
+    role: profile.role === 'senior' ? 'senior' : 'junior'
+  };
+}
+export function AuthProvider({
+  children
+}) {
+  const [user, setUser] = useState(() => normalizeProfile(readStorage(STORAGE_KEY, null)));
   const [authModal, setAuthModal] = useState({
     isOpen: false,
-    mode: 'login', // 'login' | 'register' | 'senior'
+    mode: 'login'
   });
-
   useEffect(() => {
-    try {
-      if (user) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
-      } else {
+    if (user) {
+      writeStorage(STORAGE_KEY, user);
+      const stored = readStorage(ACCOUNTS_KEY, []);
+      const accounts = Array.isArray(stored) ? stored : [];
+      writeStorage(ACCOUNTS_KEY, [...accounts.filter(account => account.id !== user.id), user]);
+    } else {
+      try {
         localStorage.removeItem(STORAGE_KEY);
-      }
-    } catch {
-      // Ignore storage errors in private browsing modes
+      } catch {/* Session still works in memory. */}
     }
   }, [user]);
-
-  const openLoginModal = useCallback(() => {
-    setAuthModal({ isOpen: true, mode: 'login' });
-  }, []);
-
-  const openRegisterModal = useCallback(() => {
-    setAuthModal({ isOpen: true, mode: 'register' });
-  }, []);
-
-  const openSeniorModal = useCallback(() => {
-    setAuthModal({ isOpen: true, mode: 'senior' });
-  }, []);
-
-  const closeAuthModal = useCallback(() => {
-    setAuthModal((prev) => ({ ...prev, isOpen: false }));
-  }, []);
-
-  const register = useCallback((profileData) => {
-    const newUser = {
+  const openLoginModal = useCallback(() => setAuthModal({
+    isOpen: true,
+    mode: 'login'
+  }), []);
+  const openRegisterModal = useCallback(() => setAuthModal({
+    isOpen: true,
+    mode: 'register'
+  }), []);
+  const openSeniorModal = useCallback(() => setAuthModal({
+    isOpen: true,
+    mode: 'senior'
+  }), []);
+  const closeAuthModal = useCallback(() => setAuthModal(prev => ({
+    ...prev,
+    isOpen: false
+  })), []);
+  const register = useCallback(profileData => {
+    const newUser = normalizeProfile({
+      ...profileData,
       name: profileData.name.trim(),
-      email: profileData.email.trim().toLowerCase(),
       college: profileData.college.trim(),
-      year: profileData.year,
-      interests: profileData.interests || [],
-      role: 'junior',
-    };
+      available: true
+    });
+    const stored = readStorage(ACCOUNTS_KEY, []);
+    if ([...(Array.isArray(stored) ? stored : []), DEMO_JUNIOR, DEMO_SENIOR].some(account => account.email === newUser.email)) {
+      return {
+        success: false,
+        error: 'A pass already exists for this email. Please log in.'
+      };
+    }
     setUser(newUser);
     closeAuthModal();
-    return newUser;
-  }, [closeAuthModal]);
-
-  const login = useCallback((email) => {
-    const normalizedEmail = (email || '').trim().toLowerCase();
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (parsed.email && parsed.email.toLowerCase() === normalizedEmail) {
-          setUser(parsed);
-          closeAuthModal();
-          return { success: true, user: parsed };
-        }
-      }
-    } catch {
-      // Fall through to error
-    }
-
-    // Check if demo user email is entered
-    if (normalizedEmail === DEMO_USER.email.toLowerCase()) {
-      setUser(DEMO_USER);
-      closeAuthModal();
-      return { success: true, user: DEMO_USER };
-    }
-
     return {
-      success: false,
-      error: 'No pass found for this email. Register first or try the demo account.',
+      success: true,
+      user: newUser
     };
   }, [closeAuthModal]);
-
-  const loginAsDemo = useCallback(() => {
-    setUser(DEMO_USER);
+  const login = useCallback(email => {
+    const stored = readStorage(ACCOUNTS_KEY, []);
+    const profile = [...(Array.isArray(stored) ? stored : []), DEMO_JUNIOR, DEMO_SENIOR].find(account => account.email === (email || '').trim().toLowerCase());
+    if (!profile) return {
+      success: false,
+      error: 'No pass found for this email. Register first or try a demo account.'
+    };
+    const nextUser = normalizeProfile(profile);
+    setUser(nextUser);
     closeAuthModal();
-    return DEMO_USER;
+    return {
+      success: true,
+      user: nextUser
+    };
   }, [closeAuthModal]);
-
-  const logout = useCallback(() => {
-    setUser(null);
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-    } catch {
-      // Ignore
-    }
+  const loginAsDemo = useCallback((role = 'junior') => {
+    const profile = role === 'senior' ? DEMO_SENIOR : DEMO_JUNIOR;
+    return login(profile.email).user;
+  }, [login]);
+  const updateProfile = useCallback(changes => {
+    setUser(current => current ? {
+      ...current,
+      ...changes,
+      id: current.id,
+      email: current.email,
+      role: current.role
+    } : null);
   }, []);
-
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isAuthenticated: !!user,
-        authModal,
-        openLoginModal,
-        openRegisterModal,
-        openSeniorModal,
-        closeAuthModal,
-        register,
-        login,
-        loginAsDemo,
-        logout,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+  const logout = useCallback(() => setUser(null), []);
+  return <AuthContext.Provider value={{
+    user,
+    isAuthenticated: !!user,
+    authModal,
+    openLoginModal,
+    openRegisterModal,
+    openSeniorModal,
+    closeAuthModal,
+    register,
+    login,
+    loginAsDemo,
+    updateProfile,
+    logout
+  }}>
+    {children}
+  </AuthContext.Provider>;
 }
-
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
+  if (!context) throw new Error('useAuth must be used within an AuthProvider');
   return context;
 }

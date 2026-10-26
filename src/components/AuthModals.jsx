@@ -5,7 +5,6 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { COLLEGES } from '../data/colleges';
 import Modal from './Modal';
-import Badge from './Badge';
 import './AuthModals.css';
 
 const INTEREST_OPTIONS = [
@@ -28,6 +27,7 @@ export default function AuthModals() {
     closeAuthModal,
     openLoginModal,
     openRegisterModal,
+    openSeniorModal,
     register,
     login,
     loginAsDemo,
@@ -54,10 +54,15 @@ export default function AuthModals() {
   const [regErrors, setRegErrors] = useState({});
   const [regTouched, setRegTouched] = useState({});
 
-  // Senior Modal State
-  const [seniorEmail, setSeniorEmail] = useState('');
-  const [seniorError, setSeniorError] = useState('');
-  const [seniorTouched, setSeniorTouched] = useState(false);
+  const isSenior = authModal.mode === 'senior';
+  const [registerError, setRegisterError] = useState('');
+
+  useEffect(() => {
+    setRegYear(authModal.mode === 'senior' ? '3rd yr' : '1st yr');
+    setRegErrors({});
+    setRegTouched({});
+    setRegisterError('');
+  }, [authModal.mode]);
 
   const collegeComboRef = useRef(null);
 
@@ -80,10 +85,10 @@ export default function AuthModals() {
   }, []);
 
   // Demo Login Handler
-  const handleDemoSignIn = () => {
-    loginAsDemo();
+  const handleDemoSignIn = (role = 'junior') => {
+    loginAsDemo(role);
     showToast('Pass ready hai! Welcome to UniBuddy 🎉');
-    navigate('/mentors');
+    navigate(role === 'senior' ? '/senior' : '/mentors');
   };
 
   // Login Submit Handler
@@ -102,7 +107,7 @@ export default function AuthModals() {
     const result = login(loginEmail);
     if (result.success) {
       showToast('Welcome back to UniBuddy! 🙌');
-      navigate('/mentors');
+      navigate(result.user.role === 'senior' ? '/senior' : '/mentors');
     } else {
       setLoginError(result.error);
     }
@@ -153,31 +158,22 @@ export default function AuthModals() {
       return;
     }
 
-    register({
+    const result = register({
       name: regName,
       email: regEmail,
       college: regCollege,
       year: regYear,
       interests: regInterests,
+      role: isSenior ? 'senior' : 'junior',
     });
 
-    showToast('Pass ready hai! Welcome to UniBuddy 🎉');
-    navigate('/mentors');
-  };
-
-  // Senior Modal Submit Handler
-  const handleSeniorSubmit = (e) => {
-    e.preventDefault();
-    setSeniorTouched(true);
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!seniorEmail.trim() || !emailRegex.test(seniorEmail.trim())) {
-      setSeniorError('Please enter a valid email address.');
+    if (!result.success) {
+      setRegisterError(result.error);
       return;
     }
-    setSeniorError('');
-    closeAuthModal();
-    showToast('Done! Launch hote hi sabse pehle bataenge 🙌');
-    setSeniorEmail('');
+
+    showToast('Pass ready hai! Welcome to UniBuddy 🎉');
+    navigate(isSenior ? '/senior' : '/mentors');
   };
 
   const toggleInterest = (interest) => {
@@ -264,10 +260,15 @@ export default function AuthModals() {
             <button
               type="button"
               className="demo-account-btn"
-              onClick={handleDemoSignIn}
+              onClick={() => handleDemoSignIn('junior')}
             >
               <Sparkles size={15} />
               <span>Try the demo account (Rahul Verma, IIT Bombay)</span>
+            </button>
+
+            <button type="button" className="demo-account-btn" onClick={() => handleDemoSignIn('senior')}>
+              <Sparkles size={15} />
+              <span>Try the senior demo (Aarav Mehta, IIT Bombay)</span>
             </button>
 
             <p className="auth-switch-text">
@@ -286,13 +287,14 @@ export default function AuthModals() {
 
       {/* 2. REGISTER JUNIOR MODAL */}
       <Modal
-        isOpen={authModal.isOpen && authModal.mode === 'register'}
+        isOpen={authModal.isOpen && ['register', 'senior'].includes(authModal.mode)}
         onClose={closeAuthModal}
-        title="Get your junior pass"
-        subtitle="Do minute mein ho jayega."
+        title={isSenior ? 'Get your senior pass' : 'Get your junior pass'}
+        subtitle={isSenior ? 'Apna experience share karo. Help someone find their way.' : 'Do minute mein ho jayega.'}
         maxWidth="560px"
       >
         <form onSubmit={handleRegisterSubmit} className="auth-form" noValidate>
+          {registerError && <div className="auth-error-banner" role="alert"><AlertCircle size={16} />{registerError}</div>}
           {/* Full Name */}
           <div className="form-field">
             <label htmlFor="reg-name">Full Name</label>
@@ -445,7 +447,7 @@ export default function AuthModals() {
 
           {/* Interests Multi-Select Chips */}
           <div className="form-field">
-            <span className="field-label-text">Interests (select at least 1)</span>
+            <span className="field-label-text">{isSenior ? 'Skills you can mentor in (select at least 1)' : 'Interests (select at least 1)'}</span>
             <div className="interests-chip-grid">
               {INTEREST_OPTIONS.map((interest) => {
                 const isSelected = regInterests.includes(interest);
@@ -516,17 +518,17 @@ export default function AuthModals() {
           </div>
 
           <button type="submit" className="btn-primary auth-submit-btn">
-            Create my pass
+            {isSenior ? 'Create my senior pass' : 'Create my pass'}
           </button>
 
           <div className="auth-footer-links">
             <button
               type="button"
               className="demo-account-btn"
-              onClick={handleDemoSignIn}
+              onClick={() => handleDemoSignIn(isSenior ? 'senior' : 'junior')}
             >
               <Sparkles size={15} />
-              <span>Try the demo account (Rahul Verma, IIT Bombay)</span>
+              <span>{isSenior ? 'Try the senior demo (Aarav Mehta, IIT Bombay)' : 'Try the demo account (Rahul Verma, IIT Bombay)'}</span>
             </button>
 
             <p className="auth-switch-text">
@@ -539,53 +541,16 @@ export default function AuthModals() {
                 Log in
               </button>
             </p>
+            <p className="auth-switch-text">
+              {isSenior ? 'Looking for guidance? ' : 'Want to mentor juniors? '}
+              <button type="button" className="auth-switch-btn" onClick={isSenior ? openRegisterModal : openSeniorModal}>
+                {isSenior ? 'Register as a junior' : 'Register as a senior'}
+              </button>
+            </p>
           </div>
         </form>
       </Modal>
 
-      {/* 3. SENIOR COMING-SOON MODAL */}
-      <Modal
-        isOpen={authModal.isOpen && authModal.mode === 'senior'}
-        onClose={closeAuthModal}
-        title="Register as a Senior"
-      >
-        <div className="senior-modal-body">
-          <Badge variant="coming-soon" className="senior-badge">
-            COMING SOON
-          </Badge>
-
-          <p className="senior-modal-copy">
-            Senior onboarding opens soon. Email chhod do, hum sabse pehle bataenge.
-          </p>
-
-          <form onSubmit={handleSeniorSubmit} className="auth-form" noValidate>
-            <div className="form-field">
-              <label htmlFor="senior-email">Your Email</label>
-              <input
-                id="senior-email"
-                type="email"
-                placeholder="senior.name@college.ac.in"
-                value={seniorEmail}
-                onChange={(e) => {
-                  setSeniorEmail(e.target.value);
-                  setSeniorError('');
-                }}
-                className={`auth-input ${seniorTouched && seniorError ? 'has-error' : ''}`}
-                required
-              />
-              {seniorTouched && seniorError && (
-                <span className="field-error-text">
-                  <AlertCircle size={13} /> {seniorError}
-                </span>
-              )}
-            </div>
-
-            <button type="submit" className="btn-primary auth-submit-btn">
-              Notify me
-            </button>
-          </form>
-        </div>
-      </Modal>
     </>
   );
 }

@@ -19,7 +19,7 @@ import RevealOnScroll from '../../components/RevealOnScroll';
 import './Home.css';
 
 export default function Home() {
-  const { isAuthenticated, openRegisterModal, openSeniorModal } = useAuth();
+  const { user, isAuthenticated, openRegisterModal, openSeniorModal } = useAuth();
 
   return (
     <div className="home-page">
@@ -58,8 +58,8 @@ export default function Home() {
             {/* CTAs */}
             <div className="hero-ctas">
               {isAuthenticated ? (
-                <Link to="/mentors" className="btn-primary hero-main-btn">
-                  <span>Go to mentors</span>
+                <Link to={user?.role === 'senior' ? '/senior' : '/mentors'} className="btn-primary hero-main-btn">
+                  <span>{user?.role === 'senior' ? 'Go to your workspace' : 'Go to mentors'}</span>
                   <ArrowRight size={18} />
                 </Link>
               ) : (

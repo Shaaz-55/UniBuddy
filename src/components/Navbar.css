@@ -66,6 +66,9 @@
 }
 
 .navbar-tab-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-family: var(--font-body);
   font-size: 13.5px;
   font-weight: 500;
@@ -75,6 +78,10 @@
   text-decoration: none;
   transition: all var(--duration-fast) ease;
 }
+
+.nav-unread-badge { display: inline-flex; align-items: center; justify-content: center; background: var(--primary); color: white; min-width: 16px; height: 16px; padding: 0 4px; font-size: 9px; border-radius: var(--radius-pill); }
+.navbar-tabs ~ .navbar-actions .theme-toggle-label { display: none; }
+.navbar-tabs ~ .navbar-actions .theme-toggle-btn { width: 40px; padding: 0; }
 
 .navbar-tab-item:hover {
   color: var(--text);
