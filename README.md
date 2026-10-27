@@ -1,164 +1,278 @@
-# UniBuddy 🎓
+# UniBuddy
 
-**UniBuddy** is a campus mentorship and peer-discovery web platform built for Indian college students (Gen-Z). It connects juniors with verified seniors for 1-on-1 practical mentorship calls (for the price of a canteen meal, not a corporate retainer), maps out essential student-rated spots around campus, and showcases uncurated campus life through micro stories.
+**Practical guidance from seniors, and a clearer start to college life.**
 
-Built to Apple-grade standards for code quality, responsiveness, and accessibility using the **Golden Hour Campus** design system.
+UniBuddy is a mentorship and campus discovery app for Indian college students. It brings together three things students often have to find separately: someone experienced to ask for advice, a map of their campus surroundings, and a way to share everyday college life.
 
----
+The idea is to help a junior find a senior who has already worked through a similar challenge, even if that senior studies at another college. A student looking for help with their first project, a resume, interview preparation, or a learning roadmap can find someone with relevant experience and start a conversation.
 
-## 🚀 Quick Start
+**Current status:** this repository contains an interactive React frontend prototype. Profiles, connections, messages, and uploaded stories are stored in the browser. The campus map loads real OpenStreetMap tiles. A shared backend, verified student identities, and paid bookings are future work.
 
-### 1. Installation
-Clone or open the repository, then install dependencies:
-```bash
-npm install
+## The problem
+
+Starting college involves more than attending classes. Students have questions such as:
+
+- Where should I start with programming, data structures, or building projects?
+- Who can give feedback on my particular resume or portfolio?
+- How do students at other colleges prepare for internships and placements?
+- Where can I find places to eat, study, stay, or work out near campus?
+- How do I meet people and feel connected to college life?
+
+Advice is often scattered across friends, group chats, videos, and expensive mentoring services. A student's immediate circle may have limited experience with the thing they want to learn. General online content can explain a topic, but personal feedback requires a conversation.
+
+UniBuddy aims to make that conversation easier to start, while giving students a shared place to explore and participate in campus life. The wider product idea includes affordable one-to-one mentoring sessions; the current implementation supports free connection and messaging flows within the local prototype.
+
+## What the app offers
+
+There are two roles: **juniors**, who are looking for guidance, and **seniors**, who want to share their experience.
+
+| Feature | What a student can do |
+| --- | --- |
+| Mentor discovery | Juniors search seniors by name, skill, or college; filter by skill, college, year, and rating; and inspect profiles, sample reviews, and session prices. |
+| Campus Circle | Juniors manage connected seniors, incoming requests, sent requests, and discovery from the Connections page. |
+| Senior workspace | Seniors edit their mentor profile, choose skills, set availability, review incoming requests, and open recent conversations. |
+| Messaging | An accepted junior–senior connection unlocks chat, with an inbox, request handling, unread counts, sent/seen indicators, emoji, and multiline messages. |
+| Campus map | The map opens around the college saved in the user's profile, with zoom, a campus marker, nearby-place categories, and a recenter button. |
+| Campus stories | Both roles browse a swipeable photo/video feed and use the **+** button to compose a story with a media preview and an optional caption. |
+
+The interface supports light and dark themes, desktop navigation, mobile bottom tabs, and shared dialogs and drawers. Seniors handle connection requests through their dashboard and inbox; the separate Connections page is available to juniors.
+
+### A typical journey
+
+Imagine a first-year student at Newton School of Technology who wants to build a first web project. They register with their college and interests, filter the mentor directory for Web Dev or React, and send a connection request to a senior. Once the senior accepts, they can exchange messages. The student can also open the map around the Sonipat campus and post a photo from college on the Stories page.
+
+This journey can be explored with demo accounts in one browser. Connecting students on separate devices will require the shared backend described below.
+
+## How OpenStreetMap is used
+
+[OpenStreetMap](https://www.openstreetmap.org/) is a community-maintained geographic database. UniBuddy uses its standard map tiles to display roads, buildings, and other mapped features around a student's college.
+
+The app displays different campuses by moving the center of the same interactive map. Each college has a latitude and longitude; Leaflet requests the tiles needed for that location and zoom level as the user explores.
+
+### The pieces involved
+
+| Piece | Responsibility |
+| --- | --- |
+| OpenStreetMap tiles | Provide the geographic map imagery. |
+| [Leaflet](https://leafletjs.com/) | Displays the map and handles panning, zooming, markers, tooltips, and popups. |
+| [React Leaflet](https://react-leaflet.js.org/) | Connects Leaflet to React through components such as `MapContainer`, `TileLayer`, and `Marker`. |
+| [College catalog](src/data/colleges.js) | Stores campus coordinates and alternate college names for all 25 listed colleges. |
+| [Location resolver](src/lib/geocode.js) | Matches the profile's college to the catalog, or looks up an unlisted name. |
+| [Nominatim](https://nominatim.org/) | Searches OpenStreetMap data to turn an unfamiliar college name into coordinates. |
+
+### From a college name to a map
+
+```mermaid
+flowchart TD
+    A[College from the signed-in profile] --> B{Found in the college catalog?}
+    B -->|Yes, including an alias| C[Use saved campus coordinates]
+    B -->|No| D{Lookup cached in this tab?}
+    D -->|Yes| E[Use the cached result]
+    D -->|No| F[Search Nominatim in India]
+    F -->|Match found| G[Cache the coordinates]
+    F -->|No match or request fails| H[Cache IIT Bombay as a fallback]
+    C --> I[Center the Leaflet map]
+    E --> I
+    G --> I
+    H --> I
+    I --> J[Load OpenStreetMap tiles and add app markers]
 ```
 
-### 2. Development Server
-Start the local Vite development server:
-```bash
-npm run dev
+1. **Read the profile.** The Map page uses the college entered during registration or saved in the user's profile.
+2. **Try the catalog first.** Matching ignores case, spaces, and punctuation and recognizes configured aliases. For example, `LPU` and `Lovely Professional University` resolve to the same campus. All 25 listed colleges have saved coordinates, so these names do not need a geocoding request.
+3. **Look up custom names when needed.** For an unlisted college, the resolver calls Nominatim's search endpoint with `countrycodes=in` and `limit=1`. The fetch has a six-second timeout. Completed results, including fallbacks, are cached in memory for the current tab until a full reload. The registration dropdown searches the local catalog; typing in it does not call Nominatim.
+4. **Handle an unsuccessful lookup.** The map uses IIT Bombay as a sample campus and displays a fallback notice. Loading failures for map tiles have a separate retry control.
+5. **Render the campus.** The map starts at zoom level `16`, adds the college marker and app-provided place markers, and updates its center when the profile's college changes.
+
+Some college names need an explicit campus choice. The catalog currently uses:
+
+| College entry | Campus used |
+| --- | --- |
+| Newton School of Technology | Rishihood University, Sonipat |
+| Vedam School of Tech | Sushant University, Gurugram |
+| Symbiosis Pune | Symbiosis Institute of Technology, Lavale, Pune |
+| SRM University | Kattankulathur campus, Tamil Nadu |
+
+The complete list, aliases, coordinates, and recorded OpenStreetMap source links are in [colleges.js](src/data/colleges.js). Adding a campus with saved coordinates to this catalog makes it available to the registration list and the map resolver.
+
+### Where the map images come from
+
+The default tile URL is:
+
+```text
+https://tile.openstreetmap.org/{z}/{x}/{y}.png
 ```
-Open [http://localhost:5173](http://localhost:5173) in your browser.
 
-### 3. Production Build & Linting
-Run the production build:
-```bash
-npm run build
-```
-Run the connection and messaging rules tests:
-```bash
-npm test
-```
-Run the ESLint suite:
-```bash
-npm run lint
-```
+A tile is a small square image covering part of the map. In this URL, `z` is the zoom level, and `x` and `y` identify the tile's position in the map grid. Leaflet combines the visible tiles into the map and requests different ones when the user pans or zooms. IIT Bombay and the other colleges all use this same tile service.
 
----
+The default configuration requires no API key. Internet access is still needed to fetch tiles and to look up unlisted colleges.
 
-## 🔑 Authentication & Demo Accounts
+### Where the nearby-place pins come from
 
-This application is **frontend-only**. Authentication is mocked client-side, with the active profile under `unibuddy_user` and registered profiles under `unibuddy_accounts_v1`. Registered accounts remain available after logout. Passwords are required during login/registration for UX simulation, but are **never stored or transmitted** and are not checked against a real account credential.
+The app adds a separate layer of nearby places from [places.js](src/data/places.js). It contains **eight sample spots**, with names, categories, ratings, reviews, walking times, and offsets measured east/north from the campus center.
 
-### Instant Demo Account
-You can click **"Try the demo account"** directly in any auth dialog, or log in with:
-- **Email:** `rahul@iitb.ac.in`
-- **Password:** `password` (any 6+ characters)
-- **Profile:** Rahul Verma, IIT Bombay, 1st yr, DSA & Web Dev
+The [coordinate helper](src/lib/geo.js) converts those meter offsets into latitude and longitude. The same sample collection is positioned around whichever college is selected. Selecting a card highlights its marker, and users can filter by Food, Study, Stay, or Fitness and sort by rating or walking time.
 
-### Senior Demo
-Click **"Try the senior demo"** in the login dialog, or register from **"Register as a Senior"** on the homepage. The senior demo is Aarav Mehta (`aarav@iitb.ac.in`, any 6+ character password), with an existing Rahul conversation and three incoming junior requests. New senior registrations start with their own empty network.
+**These place pins, reviews, and walking times are illustrative data.** They are not retrieved from OpenStreetMap or calculated from actual walking routes. Real recommendations would need a collection of places and reviews specific to each college, with accurate coordinates.
 
-To try both sides, log in as the senior in one tab, open another tab, log out there and choose the junior demo. Each already-open tab keeps its current role, while network changes and messages sync between them. Reloading a tab uses the most recently saved active profile.
+### Map configuration and attribution
 
-### Connections and Messaging
-Students send a connection request, and the recipient accepts it. Only accepted junior–senior connections can exchange messages. Either student can cancel a pending request or remove an accepted connection; removal also deletes its local conversation. Pausing a senior's availability blocks new incoming requests while existing chats remain usable.
+The defaults work without an environment file. To configure another tile provider, start with [.env.example](.env.example):
 
-Conversations are stored under `unibuddy_network_v1`, with unread counts, sent/seen receipts, emoji, multiline messages and drafts retained while navigating between inbox conversations. The browser `storage` event syncs changes across tabs on the same origin. This is a local prototype: cross-device messaging and secure access control need backend authentication, a database, and server-side connection checks. No messages are sent to a remote user or service.
-
----
-
-## 🗺️ Routes & Pages
-
-The application includes these routes:
-
-1. **`/` — Homepage (Public)**
-   - Hero with interactive 3D spring-tilted **UniBuddy Campus Pass** and Golden Hour ambient light blobs.
-   - *"Why juniors get stuck"* problem breakdown cards.
-   - *"Three steps to clarity"* numbered workflow.
-   - *"Everything in one app"* featuring live-component mini previews (mini mentor card, CSS vector campus map, and layered stories stack).
-   - *"Built in, not bolted on"* trust and safety strip.
-   - Waitlist and pass registration CTA band.
-
-2. **`/mentors` — Mentors Directory (Protected)**
-   - ADPList-inspired mentor catalog with live debounced search (by name, skill, or college).
-   - Multi-filtering by skill, college, year of study, and a Rating 4+ toggle.
-   - Sorting by top-rated, most-reviewed, and price (low-to-high / high-to-low).
-   - Shimmer loading skeletons on initial load.
-   - Responsive mentor profile drawer (desktop slide-over / mobile bottom sheet) with 3x2 proof-of-skill tiles, recent verified reviews, and booking simulation.
-   - Connect and message controls, with registered senior profiles appearing in the directory.
-
-3. **`/map` — Campus Map (Protected)**
-   - Open-source mapping powered by Leaflet and OpenStreetMap.
-   - Automatic college location resolution via in-memory cached Nominatim lookup.
-   - Custom SVG/CSS div-icon pins (pulsing college pin + category-coded place markers for Food, Study, Stay, and Fitness).
-   - Student-vetted spots sidebar with walk time, ratings, tags, and expandable student reviews.
-   - Recenter control, tile error recovery, and theme-tinted map tiles.
-
-4. **`/stories` — Campus Stories (Protected, Dark Mode)**
-   - Full immersion dark canvas (`#0B0A10`) with radial color glow.
-   - Framer Motion swipe stack supporting horizontal drag physics, keyboard navigation (Left/Right arrows, 'L' to like), and touch gesture support.
-   - Autoplay handling for videos (only the top card plays, muted by default with an audio toggle).
-   - Instagram Reels-style action rail (like with burst animations, double-tap to like, comments bottom sheet, share sheet, and report/mute menu).
-
-5. **`/senior` — Senior Dashboard (Senior only)**
-   - Matching light/dark theme, a mentorship welcome panel, availability switch, live network counts, connection requests and recent conversations.
-
-6. **`/senior/profile` — Mentor Profile (Senior only)**
-   - Editable name, college, year, branch, introduction, mentorship skills and availability, with a live junior-facing preview.
-
-7. **`/connections` — Campus Circle (Protected, both roles)**
-   - Connected students, incoming requests, sent requests and discovery, with search, profiles, acceptance, cancellation and removal.
-
-8. **`/messages` and `/messages/:peerId` — Inbox (Protected, both roles)**
-   - Instagram-style conversation list and chat pane, request inbox, connection gating, read receipts, emoji, multiline composer and mobile inbox/thread navigation.
-
----
-
-## ⚙️ Environment Variables & Configuration
-
-The app requires **NO API keys** and **NO paid billing accounts**.
-
-To configure custom map tile layers, copy `.env.example` to `.env.local`:
 ```bash
 cp .env.example .env.local
 ```
 
-### Environment Settings:
-| Variable | Default Value | Description |
-| :--- | :--- | :--- |
-| `VITE_MAP_TILE_URL` | `https://tile.openstreetmap.org/{z}/{x}/{y}.png` | OpenStreetMap tile endpoint URL template. |
-| `VITE_MAP_ATTRIBUTION` | `&copy; OpenStreetMap contributors` | Legal license attribution markup for tile provider. |
+| Variable | Purpose |
+| --- | --- |
+| `VITE_MAP_TILE_URL` | Tile URL template; defaults to the OpenStreetMap URL above. |
+| `VITE_MAP_ATTRIBUTION` | Attribution HTML shown on the map; defaults to a link crediting OpenStreetMap contributors. |
 
----
+Restart the development server after changing these values. Vite embeds `VITE_` variables in the browser bundle, so these settings are public.
 
-## 🗺️ Open-Source Maps Architecture
+OpenStreetMap attribution remains visible on the map. Use of the public services must follow the [tile usage policy](https://operations.osmfoundation.org/policies/tiles/) and [Nominatim usage policy](https://operations.osmfoundation.org/policies/nominatim/). The current cache is per tab and does not enforce an application-wide request limit. A larger deployment would need providers and shared request controls suited to its traffic.
 
-### 1. Leaflet & OpenStreetMap Tiles
-- The map is implemented using **Leaflet 1.9.x** and **react-leaflet v4.x** (the official React 18 release line).
-- Per OpenStreetMap's license requirement, attribution remains visible at all times, styled in a sleek translucent glass pill.
+## How stories work
 
-### 2. Public Tile Server Guidelines
-- OpenStreetMap's public tile servers (`tile.openstreetmap.org`) are operated by volunteer donations for testing and light personal usage.
-- **For production deployments or heavy traffic:** Point `VITE_MAP_TILE_URL` to a commercial tile provider (such as MapTiler, Stadia Maps, Jawg) or a self-hosted tile server.
+Both juniors and seniors can open **Stories**, press **+**, select a photo or video up to **20 MB**, preview it, and add an optional caption of up to **280 characters**. The composer checks the file type, size, and whether the browser can load the preview before enabling submission.
 
-### 3. Nominatim Geocoding Policy
-- To resolve unfamiliar or custom college names entered by users, the platform calls the free OpenStreetMap **Nominatim** geocoder.
-- **Strict Compliance:** Requests are strictly limited to at most one request per distinct college per session, guarded by a module-level in-memory cache and a 6-second `AbortController` timeout. Nominatim is **never** invoked on keystroke or for autocomplete.
+Uploaded media and its author, college, caption, and creation time are saved in **IndexedDB**, the browser's database for larger structured data and files. The feed creates temporary object URLs to display the saved media and releases them when they are no longer needed.
 
-### 4. Future Upgrade Path: MapLibre GL & Vector Tiles
-For teams looking to elevate map aesthetics further:
-- The map layer can be seamlessly transitioned to **MapLibre GL JS** paired with free vector tiles from providers like **OpenFreeMap** (which require zero API keys, no billing, and support 60fps vector rotation and 3D terrain).
+Posts are loaded newest first for the user's college, using the same college aliases as the map. They appear before the eight bundled example stories. Uploads survive reloads, and both roles can view posts for the same college in the same browser. Other devices do not receive these files, and there is no automatic 24-hour expiry.
 
----
+The feed includes swipe navigation, video playback, likes, comments, and share controls. Likes and comments are held in page state and reset when the page is reloaded or reopened. Sharing sends the Stories page URL; it does not publish the locally stored media to a server. Report and mute actions currently display confirmation messages only.
 
-## ♿ Accessibility & Polish Standards
+## Architecture and data storage
 
-- **Semantic Hierarchy:** Single `h1` per view, landmark tags (`<header>`, `<nav>`, `<main>`, `<section>`, `<aside>`, `<footer>`).
-- **prefers-reduced-motion:** Fully respects OS motion reduction preferences by disabling card spring tilts, pulsing map rings, reveal-on-scroll animations, and swipe flourishes.
-- **Keyboard Navigation:** Full keyboard navigation support (Enter/Space on cards, focus trapping within modals/sheets/drawers, Escape to dismiss, Arrow keys for story navigation).
-- **Mobile First:** Engineered with 44px+ minimum touch targets, zero horizontal scrolling, and fluid layouts validated at 360px, 768px, 1024px, and 1440px.
-- **Zero Legacy Brand Occurrences:** Thoroughly purged of all legacy naming; 100% unified under **UniBuddy**.
+UniBuddy is a single-page application: React renders the interface, React Router selects the page, and React Context shares profile and network state between components.
 
----
+| Technology | Use in this project |
+| --- | --- |
+| React 18 | Pages, reusable components, forms, and interactive state. |
+| Vite 5 | Local development server and production builds. |
+| React Router 6 | Navigation and role-specific page access. |
+| Leaflet 1.9 + React Leaflet 4 | Campus maps and map interactions. |
+| Framer Motion 11 | Story gestures, transitions, and interface animations. |
+| Lucide React | Icons. |
+| Plain CSS and CSS custom properties | Page layouts, shared design tokens, responsive styles, and themes. |
+| Browser localStorage + IndexedDB | Local profiles, messages, settings, and uploaded stories. |
+| ESLint + Node.js test runner | Code checks and tests for college resolution and connection rules. |
 
-## 🛠️ Tech Stack
+[AuthContext](src/context/AuthContext.jsx) manages the current profile and login/register dialogs. [NetworkContext](src/context/NetworkContext.jsx) manages profiles, requests, connections, and messages. [ToastContext](src/context/ToastContext.jsx) displays temporary feedback messages.
 
-- **Runtime & Bundler:** Vite 5 + React 18 (JSX)
-- **Routing:** react-router-dom v6
-- **Motion & Gestures:** framer-motion 11
-- **Mapping:** leaflet 1.9 + react-leaflet 4
-- **Icons:** lucide-react (strokeWidth: 1.75)
-- **Typography:** Bricolage Grotesque (800, 700) & Inter (400, 500, 600) via Google Fonts CSS2
-- **Styling:** Vanilla CSS with custom properties & modular stylesheets (no Tailwind / UI kit bloat)
+Connection rules live in [network.js](src/lib/network.js). A request must join a junior and a senior, the recipient must accept it before messaging opens, and only participants can act on that connection through the application logic. Pausing a senior's availability stops new incoming requests while existing conversations stay usable. Removing a connection also removes its local message history. These rules run in the browser; a deployed multi-user service would need server-side enforcement.
+
+### What is saved
+
+| Storage | Key or database | Contents |
+| --- | --- | --- |
+| localStorage | `unibuddy_user` | The active profile, restored on reload. |
+| localStorage | `unibuddy_accounts_v1` | Registered and previously used profiles. |
+| localStorage | `unibuddy_network_v1` | Network profiles, connections, requests, and sent messages. |
+| localStorage | `unibuddy-theme` | Light/dark preference. |
+| IndexedDB | `unibuddy_stories_v1`, store `stories` | Uploaded story files and metadata, indexed by college. |
+
+Message drafts stay in React state while switching conversations within the inbox. Story likes/comments and the custom-college geocoding cache also use memory rather than persistent storage.
+
+Network changes synchronize between tabs through the browser's `storage` event. Browser data belongs to the site's origin: a different device, browser, hostname, or port has separate data. For example, the development server and production preview normally use different ports and therefore different local data. Clearing the site's browser storage removes its saved profiles, conversations, and uploads.
+
+### Authentication in the prototype
+
+Registration validates the form and creates a local profile. Login finds a saved or demo profile by email. The password field requires at least six characters for the form to submit, but passwords are never saved, transmitted, or checked against an account credential. College email ownership and student identity are not verified.
+
+Role checks control which screens the interface opens. They demonstrate the intended junior/senior experience; they are not a substitute for backend authentication and authorization.
+
+## Run locally
+
+Use a supported Node.js LTS release, with **Node.js 22 or newer recommended**, and npm.
+
+From the repository folder:
+
+```bash
+npm ci
+npm run dev
+```
+
+Open the address printed by Vite, usually [http://localhost:5173](http://localhost:5173). No backend service or API key is needed for the default setup. Map tiles, bundled remote photos/videos, and web fonts need an internet connection.
+
+### Try the demo accounts
+
+Open **Log in** and choose either demo button, or use the following email addresses with any password of six or more characters in the form:
+
+| Role | Profile | Email |
+| --- | --- | --- |
+| Junior | Rahul Verma, IIT Bombay | `rahul@iitb.ac.in` |
+| Senior | Aarav Mehta, IIT Bombay | `aarav@iitb.ac.in` |
+
+The demo includes an existing Rahul–Aarav conversation and three incoming requests for Aarav. The directory begins with 12 sample senior profiles. A new registration gets its own empty set of connections and requests, and a registered senior's profile becomes available in the local mentor directory.
+
+To try a different campus map, register a profile with that college. Seniors can also change their college in **Edit mentor profile** and open `/map`.
+
+To simulate both sides of a chat, sign in as the senior in one tab. In a second tab on the same site, log out and choose the junior demo. Already-open tabs keep their current role while network changes synchronize. Reloading either tab restores the most recently saved active profile.
+
+### Development commands
+
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Start Vite with live updates while editing. |
+| `npm run lint` | Run ESLint; warnings are treated as failures. |
+| `npm test` | Run the Node.js tests in `tests/`. |
+| `npm run build` | Generate the production site in `dist/`. |
+| `npm run preview` | Serve the latest production build locally. Run the build first. |
+
+The tests cover local resolution of all listed colleges and aliases, the selected Newton/Vedam campuses, and connection/message rules such as duplicate requests, acceptance, participant checks, unread counts, message length, and removal. They do not exercise the rendered interface, story uploads, or live OpenStreetMap availability.
+
+For deployment, serve `dist/` over HTTPS and configure the host to return `index.html` for application routes such as `/map` and `/stories`. This allows direct links and reloads to work with `BrowserRouter`. Edit the files in `src/` and rebuild; the hashed files in `dist/assets/` are generated output.
+
+## Pages and source structure
+
+| Route | Access | Page |
+| --- | --- | --- |
+| `/` | Public | Product introduction and registration/login entry points. |
+| `/mentors` | Junior | Mentor search and profiles. |
+| `/connections` | Junior | Campus Circle and connection management. |
+| `/senior` | Senior | Mentorship dashboard. |
+| `/senior/profile` | Senior | Mentor profile editor. |
+| `/messages` | Junior and senior | Inbox and connection requests. |
+| `/messages/:peerId` | Junior and senior | A specific conversation; sending requires an accepted connection. |
+| `/map` | Junior and senior | Map centered on the profile's college. |
+| `/stories` | Junior and senior | Story feed and composer. |
+
+The map route accepts both roles; its main navigation shortcut is in the junior interface. Senior dashboard request links open `/messages?tab=requests`. Visitors who open protected pages are sent to the homepage with the login dialog; a user opening a page restricted to the other role is sent to their own landing page.
+
+```text
+src/
+  App.jsx             Route definitions and application providers
+  main.jsx            React entry point and initial theme
+  components/         Navigation, auth forms, cards, avatars, dialogs, drawers
+  context/            AuthContext, NetworkContext, ToastContext
+  data/               College catalog and sample mentors, network, places, stories
+  lib/                Geocoding, coordinate math, network rules, storage helpers
+  pages/
+    Home/             Product introduction
+    Mentors/          Mentor discovery
+    Senior/           Senior dashboard and profile editor
+    Connections/      Junior connection management
+    Messages/         Inbox and chat
+    CampusMap/        Leaflet map and nearby-place interface
+    Stories/          Swipeable feed and story composer
+  styles/             Shared CSS, design tokens, and themes
+public/               Static assets
+tests/               College-location and connection-rule tests
+vite.config.js       Build configuration and vendor/map/motion chunks
+.env.example         Optional map settings
+```
+
+## Current scope and next steps
+
+The repository demonstrates the product experience with local persistence. Several visible elements describe capabilities that would need additional services before a public launch:
+
+| Area | Current behavior |
+| --- | --- |
+| Mentoring sessions | Prices are shown, but **Book** displays a message that booking is coming soon. Scheduling, calls, payments, and payment holding are not implemented. |
+| Identity and trust | Demo profiles include verification labels. Email verification and a real student-verification process are not implemented. |
+| Community data | Mentor reviews, nearby-place recommendations, bundled stories, and homepage activity figures are sample content. |
+| Messaging and uploads | Data stays in the browser. There is no shared server database, cross-device delivery, or remote media hosting. |
+| Moderation | Story report/mute buttons show feedback. There is no report queue, review team integration, or persistent author muting. |
+
+To turn this into a shared student service, the main next steps would be backend authentication and college verification, a shared database with access controls, real-time messaging, hosted media with moderation, and actual campus-specific places and reviews. Scheduling and payments could then support the affordable mentoring sessions described in the product vision.
