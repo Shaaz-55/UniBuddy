@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Check, CheckCheck, ChevronRight, HeartHandshake, Info, LockKeyhole, MessageCircle, PenSquare, Search, Send, Smile, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useNetwork } from '../../context/NetworkContext';
@@ -45,8 +45,10 @@ export default function Messages() {
     peerId
   } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const requestedTab = user.role === 'senior' && searchParams.get('tab') === 'requests' ? 'requests' : 'chats';
   const [search, setSearch] = useState('');
-  const [sidebarTab, setSidebarTab] = useState('chats');
+  const [sidebarTab, setSidebarTab] = useState(requestedTab);
   const [drafts, setDrafts] = useState({});
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [newMessageOpen, setNewMessageOpen] = useState(false);
@@ -67,6 +69,9 @@ export default function Messages() {
   })).filter(item => item.profile).sort((a, b) => (b.last?.createdAt || b.connection.createdAt) - (a.last?.createdAt || a.connection.createdAt));
   const visibleConversations = conversations.filter(item => `${item.profile.name} ${item.profile.college}`.toLowerCase().includes(search.toLowerCase()));
   const visibleRequests = incomingRequests.map(item => profiles.find(profile => profile.id === item.from)).filter(profile => profile && `${profile.name} ${profile.college}`.toLowerCase().includes(search.toLowerCase()));
+  useEffect(() => {
+    setSidebarTab(requestedTab);
+  }, [requestedTab]);
   useEffect(() => {
     setEmojiOpen(false);
     setProfileOpen(false);
@@ -190,7 +195,7 @@ export default function Messages() {
             <p>
               {search ? 'Try another name or college.' : 'Connect with a student to start a conversation.'}
             </p>
-            <Link className="network-text-link" to="/connections">Find your circle <ArrowRight size={14} /></Link>
+            {user.role !== 'senior' && <Link className="network-text-link" to="/connections">Find your circle <ArrowRight size={14} /></Link>}
           </div> : visibleRequests.length ? visibleRequests.map(profile => <div className="inbox-request" key={profile.id}>
             <div>
               <StudentAvatar profile={profile} />
@@ -362,7 +367,7 @@ export default function Messages() {
           <HeartHandshake size={30} />
           <h3>Make your first connection</h3>
           <p>Once a request is accepted, you&apos;ll find your connection here.</p>
-          <Link className="btn-primary network-btn" to="/connections" onClick={() => setNewMessageOpen(false)}>Find your circle <ArrowRight size={14} /></Link>
+          {user.role !== 'senior' && <Link className="btn-primary network-btn" to="/connections" onClick={() => setNewMessageOpen(false)}>Find your circle <ArrowRight size={14} /></Link>}
         </div>}
       </div>
     </Modal>
@@ -381,7 +386,7 @@ export default function Messages() {
         <p>
           {peer.bio || 'Here to connect, learn and grow together.'}
         </p>
-        <Link className="network-secondary-btn" to="/connections" onClick={() => setProfileOpen(false)}>Manage connections <ArrowRight size={14} /></Link>
+        {user.role !== 'senior' && <Link className="network-secondary-btn" to="/connections" onClick={() => setProfileOpen(false)}>Manage connections <ArrowRight size={14} /></Link>}
       </div>}
     </Drawer>
   </div>;

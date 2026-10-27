@@ -60,6 +60,130 @@
   align-items: center;
 }
 
+.stories-create-toolbar {
+  width: 100%;
+  max-width: 390px;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.story-create-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  color: var(--text);
+  background: var(--surface);
+  border: 2px solid var(--text);
+  border-radius: 12px;
+}
+
+.story-create-btn:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.story-composer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.story-composer-preview {
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: #17161D;
+}
+
+.story-composer-preview img,
+.story-composer-preview video {
+  display: block;
+  width: 100%;
+  height: min(38vh, 320px);
+  object-fit: contain;
+}
+
+.story-media-picker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 12px;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-md);
+}
+
+.story-media-picker small,
+.story-caption-label span {
+  color: var(--text-2);
+  font-weight: 400;
+}
+
+.story-caption-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.story-caption-input {
+  width: 100%;
+  padding: 12px;
+  resize: vertical;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  font: inherit;
+}
+
+.story-composer-error {
+  margin: 0;
+  color: var(--danger-text);
+  font-size: 13px;
+}
+
+.story-composer-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.story-post-btn {
+  flex: 1;
+}
+
+.story-create-btn:disabled,
+.story-composer button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.story-cancel-btn {
+  padding: 12px;
+  color: var(--text-2);
+  border: 0;
+  background: transparent;
+}
+
+.story-post-spinner {
+  animation: story-post-spin 1s linear infinite;
+}
+
+@keyframes story-post-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .story-post-spinner { animation: none; }
+}
+
 /* Cards Stack */
 .stories-cards-stack {
   position: relative;

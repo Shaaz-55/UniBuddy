@@ -38,7 +38,7 @@ export default function App() {
 
               <Route path="/senior" element={<ProtectedRoute role="senior"><SeniorDashboard /></ProtectedRoute>} />
               <Route path="/senior/profile" element={<ProtectedRoute role="senior"><SeniorProfile /></ProtectedRoute>} />
-              <Route path="/connections" element={<ProtectedRoute><Connections /></ProtectedRoute>} />
+              <Route path="/connections" element={<ProtectedRoute role="junior"><Connections /></ProtectedRoute>} />
               <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
               <Route path="/messages/:peerId" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
 

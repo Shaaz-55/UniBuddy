@@ -11,7 +11,7 @@ export default function BottomTabBar() {
   if (!isAuthenticated) return null;
 
   const tabs = user.role === 'senior'
-    ? [{ to: '/senior', label: 'Home', icon: LayoutDashboard, end: true }, { to: '/connections', label: 'Juniors', icon: Users, count: incomingRequests.length }, { to: '/messages', label: 'Messages', icon: MessageCircle, count: unreadCount }, { to: '/senior/profile', label: 'Profile', icon: UserRound }]
+    ? [{ to: '/senior', label: 'Home', icon: LayoutDashboard, end: true }, { to: '/stories', label: 'Stories', icon: Sparkles }, { to: '/messages', label: 'Messages', icon: MessageCircle, count: unreadCount }, { to: '/senior/profile', label: 'Profile', icon: UserRound }]
     : [{ to: '/mentors', label: 'Mentors', icon: Users }, { to: '/connections', label: 'Circle', icon: HeartHandshake, count: incomingRequests.length }, { to: '/messages', label: 'Messages', icon: MessageCircle, count: unreadCount }, { to: '/map', label: 'Map', icon: MapPin }, { to: '/stories', label: 'Stories', icon: Sparkles }];
 
   return (

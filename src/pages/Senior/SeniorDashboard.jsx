@@ -33,13 +33,13 @@ export default function SeniorDashboard() {
     value: acceptedConnections.length,
     icon: Users,
     tint: 'indigo',
-    to: '/connections'
+    to: '/messages'
   }, {
     label: 'Connection requests',
     value: incomingRequests.length,
     icon: UserPlus,
     tint: 'pink',
-    to: '/connections?tab=requests'
+    to: '/messages?tab=requests'
   }, {
     label: 'Unread messages',
     value: unreadCount,
@@ -69,7 +69,7 @@ export default function SeniorDashboard() {
         <span className="senior-hero-tag"><HeartHandshake size={14} /> PASS IT FORWARD</span>
         <h2>You figured it out.<br />Now, <span className="gradient-text">be their shortcut.</span></h2>
         <p>From the first line of code to the first internship.<br className="hide-mobile" /> Be the senior you wish you had.</p>
-        <Link className="btn-primary" to="/connections?tab=discover">Meet your juniors <ArrowRight size={16} /></Link>
+        <Link className="btn-primary" to="/messages">Open messages <ArrowRight size={16} /></Link>
         <div className="senior-hero-foot">
           <span className="hero-avatar-stack">
             {profiles.filter(profile => profile.role === 'junior').slice(1, 4).map(profile => <StudentAvatar key={profile.id} profile={profile} size="small" />)}
@@ -133,7 +133,7 @@ export default function SeniorDashboard() {
               </span></h2>
             <p>A hello today. A head start tomorrow.</p>
           </div>
-          <Link className="network-text-link" to="/connections?tab=requests">View all <ArrowRight size={14} /></Link>
+          <Link className="network-text-link" to="/messages?tab=requests">View all <ArrowRight size={14} /></Link>
         </div>
         {incomingRequests.length ? <div className="senior-request-list">
           {incomingRequests.slice(0, 3).map(connection => {
@@ -155,8 +155,8 @@ export default function SeniorDashboard() {
         </div> : <div className="network-empty">
           <UserPlus size={28} />
           <h3>You&apos;re all caught up</h3>
-          <p>Find a junior to connect with, or keep your profile open for new requests.</p>
-          <Link className="network-text-link" to="/connections?tab=discover">Discover juniors <ArrowRight size={14} /></Link>
+          <p>Keep your profile open for new requests from juniors.</p>
+          <Link className="network-text-link" to="/messages?tab=requests">View requests <ArrowRight size={14} /></Link>
         </div>}
       </section>
       <aside className="network-panel senior-profile-nudge">

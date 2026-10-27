@@ -16,11 +16,14 @@ import {
   UserX,
   RotateCcw,
   Sparkles,
+  Plus,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { STORIES } from '../../data/stories';
+import { loadPostedStories } from '../../lib/stories';
 import BottomSheet from '../../components/BottomSheet';
+import StoryComposer from './StoryComposer';
 import './Stories.css';
 
 // Individual Swipeable Card
@@ -120,7 +123,7 @@ function StoryCard({
           {story.type === 'image' || mediaError ? (
             <img
               src={mediaError ? undefined : story.src}
-              alt={story.caption}
+              alt={story.caption || `Story by ${story.authorName}`}
               className="story-media-content"
               loading="lazy"
               onError={() => setMediaError(true)}
@@ -300,9 +303,47 @@ export default function Stories() {
   const { showToast } = useToast();
   const collegeName = user?.college || 'IIT Bombay';
 
-  // State: active list of stories (starts with all 8 items)
+  // Posted stories appear before the existing campus story stack.
   const [storiesList, setStoriesList] = useState(STORIES);
   const [topIndex, setTopIndex] = useState(0);
+  const [isComposerOpen, setIsComposerOpen] = useState(false);
+  const [isLoadingPosts, setIsLoadingPosts] = useState(true);
+  const postedMediaUrls = useRef(new Set());
+
+  useEffect(() => {
+    let cancelled = false;
+    const urls = postedMediaUrls.current;
+    setIsLoadingPosts(true);
+    setStoriesList(STORIES);
+    setTopIndex(0);
+    loadPostedStories(collegeName).then(stories => {
+      if (cancelled) return;
+      const posted = stories.map(story => {
+        const src = URL.createObjectURL(story.media);
+        urls.add(src);
+        return { ...story, src };
+      });
+      setStoriesList([...posted, ...STORIES]);
+    }).catch(() => {
+      if (!cancelled) showToast('Saved stories could not be loaded from this browser.');
+    }).finally(() => {
+      if (!cancelled) setIsLoadingPosts(false);
+    });
+    return () => {
+      cancelled = true;
+      urls.forEach(url => URL.revokeObjectURL(url));
+      urls.clear();
+    };
+  }, [collegeName, showToast]);
+
+  const closeComposer = useCallback(() => setIsComposerOpen(false), []);
+  const handleStoryPosted = story => {
+    const src = URL.createObjectURL(story.media);
+    postedMediaUrls.current.add(src);
+    setStoriesList(current => [{ ...story, src }, ...current]);
+    setTopIndex(0);
+    showToast('Your story has been shared!');
+  };
 
   // Per-story likes state & comments state
   const [storyLikes, setStoryLikes] = useState(() => {
@@ -344,7 +385,6 @@ export default function Stories() {
   // Restore full stack
   const handleResetStack = () => {
     setTopIndex(0);
-    setStoriesList([...STORIES]);
   };
 
   // Like Toggle Handler
@@ -383,6 +423,7 @@ export default function Stories() {
 
   // Keyboard navigation: Left/Right arrows, 'L' for like
   useEffect(() => {
+    if (isComposerOpen) return;
     const handleKeyDown = (e) => {
       // Don't intercept if an input is active
       if (
@@ -406,7 +447,7 @@ export default function Stories() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleDismiss, handleLikeToggle]);
+  }, [handleDismiss, handleLikeToggle, isComposerOpen]);
 
   // Add Comment Handler
   const handleSendComment = (e) => {
@@ -483,6 +524,11 @@ export default function Stories() {
       </div>
 
       <div className="stories-viewport wrap">
+        <div className="stories-create-toolbar">
+          <button type="button" className="story-create-btn" onClick={() => setIsComposerOpen(true)} aria-label="Post a story" aria-haspopup="dialog" title="Post a story" disabled={isLoadingPosts}>
+            <Plus size={24} strokeWidth={2} />
+          </button>
+        </div>
         {visibleCards.length === 0 ? (
           // Empty State
           <div className="stories-empty-state">
@@ -568,6 +614,8 @@ export default function Stories() {
           </div>
         )}
       </div>
+
+      {isComposerOpen && <StoryComposer user={user} onClose={closeComposer} onPost={handleStoryPosted} />}
 
       {/* 1. COMMENTS BOTTOM SHEET */}
       <BottomSheet

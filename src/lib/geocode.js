@@ -1,16 +1,16 @@
-import { COLLEGES, DEFAULT_COLLEGE } from '../data/colleges';
+import { DEFAULT_COLLEGE, getCollegeByName } from '../data/colleges.js';
 
-// Module-level in-memory cache to strictly obey Nominatim 1-req-per-session usage policy
+// Cache lookups for custom college names during this session.
 const geocodeCache = new Map();
 
 /**
  * Resolves coordinates for a college name.
- * 1. Exact or case-insensitive match against pre-configured COLLEGES
+ * 1. Match listed colleges and their aliases to saved campus coordinates
  * 2. Nominatim single request with 6s timeout, cached in memory
  * 3. Fallback to IIT Bombay with isFallback: true flag
  */
 export async function resolveCollegeLocation(rawCollegeName) {
-  const collegeName = (rawCollegeName || '').trim();
+  const collegeName = typeof rawCollegeName === 'string' ? rawCollegeName.trim() : '';
   if (!collegeName) {
     return {
       lat: DEFAULT_COLLEGE.lat,
@@ -22,9 +22,7 @@ export async function resolveCollegeLocation(rawCollegeName) {
 
   // 1. Check local static database
   const normalizedQuery = collegeName.toLowerCase();
-  const matched = COLLEGES.find(
-    (c) => c.name.toLowerCase() === normalizedQuery
-  );
+  const matched = getCollegeByName(collegeName);
 
   if (matched && typeof matched.lat === 'number' && typeof matched.lng === 'number') {
     return {

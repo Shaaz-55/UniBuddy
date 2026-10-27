@@ -13,11 +13,11 @@ export default function Navbar() {
   const { showToast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
-  const { unreadCount, incomingRequests } = useNetwork();
+  const { unreadCount } = useNetwork();
   const isSenior = user?.role === 'senior';
   const homeRoute = isSenior ? '/senior' : '/mentors';
   const tabs = isSenior
-    ? [{ to: '/senior', label: 'Dashboard', end: true }, { to: '/connections', label: 'My juniors', count: incomingRequests.length }, { to: '/messages', label: 'Messages', count: unreadCount }, { to: '/stories', label: 'Stories' }]
+    ? [{ to: '/senior', label: 'Dashboard', end: true }, { to: '/messages', label: 'Messages', count: unreadCount }, { to: '/stories', label: 'Stories' }]
     : [{ to: '/mentors', label: 'Mentors' }, { to: '/map', label: 'Map' }, { to: '/stories', label: 'Stories' }, { to: '/messages', label: 'Messages', count: unreadCount }];
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -240,7 +240,7 @@ const toggleTheme = () => {
                   </div>
                   <div className="dropdown-divider" />
                   {isSenior && <Link to="/senior/profile" className="dropdown-item" role="menuitem" onClick={() => setIsDropdownOpen(false)}><UserRound size={16} />Edit mentor profile</Link>}
-                  <Link to="/connections" className="dropdown-item" role="menuitem" onClick={() => setIsDropdownOpen(false)}><Users size={16} />Your connections</Link>
+                  {!isSenior && <Link to="/connections" className="dropdown-item" role="menuitem" onClick={() => setIsDropdownOpen(false)}><Users size={16} />Your connections</Link>}
                   <button
                     type="button"
                     className="dropdown-item logout-btn"

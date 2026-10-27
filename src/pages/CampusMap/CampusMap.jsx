@@ -140,6 +140,9 @@ export default function CampusMap() {
   useEffect(() => {
     let isMounted = true;
     setIsResolving(true);
+    setSelectedPlaceId(null);
+    setRecenterCounter(0);
+    setTileErrorCount(0);
 
     resolveCollegeLocation(collegeName).then((result) => {
       if (isMounted) {
@@ -264,6 +267,7 @@ export default function CampusMap() {
             )}
 
             <MapContainer
+              key={`${resolvedLocation.lat},${resolvedLocation.lng}`}
               center={[resolvedLocation.lat, resolvedLocation.lng]}
               zoom={16}
               scrollWheelZoom={true}
