@@ -125,6 +125,7 @@ function StoryCard({
               src={mediaError ? undefined : story.src}
               alt={story.caption || `Story by ${story.authorName}`}
               className="story-media-content"
+              draggable={false}
               loading="lazy"
               onError={() => setMediaError(true)}
               style={mediaError ? { background: story.poster } : undefined}
@@ -134,6 +135,7 @@ function StoryCard({
               ref={videoRef}
               src={story.src}
               className="story-media-content"
+              draggable={false}
               loop
               muted={isMuted}
               playsInline

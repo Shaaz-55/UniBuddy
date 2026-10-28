@@ -524,18 +524,6 @@
   white-space: nowrap;
 }
 
-/* Desktop Action Rail outside card (≥900px) */
-@media (min-width: 900px) {
-  .story-action-rail {
-    right: -68px;
-    bottom: 40px;
-  }
-
-  .story-bottom-scrim {
-    padding-right: 20px;
-  }
-}
-
 /* Bottom Controls & Hint Line */
 .stories-bottom-controls {
   margin-top: 24px;
