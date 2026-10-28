@@ -511,7 +511,7 @@ export default function Stories() {
   return (
     <div className="stories-page">
       {/* Accessible aria-live screen-reader announcement */}
-      <div className="sr-only" aria-live="polite">
+      <div className="stories-announcement" aria-live="polite" aria-atomic="true">
         {currentStory
           ? `Now viewing story by ${currentStory.authorName}: ${currentStory.caption}`
           : 'All stories viewed.'}
@@ -524,11 +524,6 @@ export default function Stories() {
       </div>
 
       <div className="stories-viewport wrap">
-        <div className="stories-create-toolbar">
-          <button type="button" className="story-create-btn" onClick={() => setIsComposerOpen(true)} aria-label="Post a story" aria-haspopup="dialog" title="Post a story" disabled={isLoadingPosts}>
-            <Plus size={24} strokeWidth={2} />
-          </button>
-        </div>
         {visibleCards.length === 0 ? (
           // Empty State
           <div className="stories-empty-state">
@@ -583,36 +578,55 @@ export default function Stories() {
               })}
             </div>
 
-            {/* Nav & Hint Line Below Stack */}
-            <div className="stories-bottom-controls">
-              <div className="stories-nav-arrows">
-                <button
-                  type="button"
-                  className="nav-arrow-btn"
-                  onClick={() => handleDismiss('left')}
-                  title="Previous / Skip (Left Arrow)"
-                  aria-label="Skip to previous story"
-                >
-                  <ChevronLeft size={20} />
-                </button>
-
-                <p className="stories-hint-deck">
-                  Swipe karo · Double-tap se like ❤️
-                </p>
-
-                <button
-                  type="button"
-                  className="nav-arrow-btn"
-                  onClick={() => handleDismiss('right')}
-                  title="Next (Right Arrow)"
-                  aria-label="Next story"
-                >
-                  <ChevronRight size={20} />
-                </button>
-              </div>
-            </div>
           </div>
         )}
+
+        {/* Keep the create button centered below the media, including the empty state. */}
+        <div className="stories-bottom-controls">
+          <div className="stories-nav-arrows">
+            {currentStory && (
+              <button
+                type="button"
+                className="nav-arrow-btn"
+                onClick={() => handleDismiss('left')}
+                title="Previous / Skip (Left Arrow)"
+                aria-label="Skip to previous story"
+              >
+                <ChevronLeft size={20} />
+              </button>
+            )}
+
+            <button
+              type="button"
+              className="story-create-btn"
+              onClick={() => setIsComposerOpen(true)}
+              aria-label="Post a story"
+              aria-haspopup="dialog"
+              title="Post a story"
+              disabled={isLoadingPosts}
+            >
+              <Plus size={28} strokeWidth={2.25} />
+            </button>
+
+            {currentStory && (
+              <button
+                type="button"
+                className="nav-arrow-btn"
+                onClick={() => handleDismiss('right')}
+                title="Next (Right Arrow)"
+                aria-label="Next story"
+              >
+                <ChevronRight size={20} />
+              </button>
+            )}
+          </div>
+
+          {currentStory && (
+            <p className="stories-hint-deck">
+              Swipe karo · Double-tap se like ❤️
+            </p>
+          )}
+        </div>
       </div>
 
       {isComposerOpen && <StoryComposer user={user} onClose={closeComposer} onPost={handleStoryPosted} />}
